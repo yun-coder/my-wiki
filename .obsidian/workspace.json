@@ -1,0 +1,225 @@
+{
+  "main": {
+    "id": "4bae08ffee32d7f7",
+    "type": "split",
+    "children": [
+      {
+        "id": "61d3bea1539dd339",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "3694bb64a38b949c",
+            "type": "leaf",
+            "state": {
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "关系图谱"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "914486958256de48",
+    "type": "split",
+    "children": [
+      {
+        "id": "8d24ba1174490cb9",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "33311b2864b15391",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "文件列表"
+            }
+          },
+          {
+            "id": "43ee7163990a3ed3",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "搜索"
+            }
+          },
+          {
+            "id": "c83bc04009c9d78d",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "书签"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "80a4c3438f0dbf9a",
+    "type": "split",
+    "children": [
+      {
+        "id": "90fc8ba49940ff52",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "e784b764b7908b4c",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "反向链接"
+            }
+          },
+          {
+            "id": "96f509f76ca42b9d",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "出链"
+            }
+          },
+          {
+            "id": "35d549213a1730e2",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "标签"
+            }
+          },
+          {
+            "id": "8cba51a17d1899c4",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "添加笔记属性"
+            }
+          },
+          {
+            "id": "7bb32f869c6613d1",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "大纲"
+            }
+          },
+          {
+            "id": "f346ed75ac9cc798",
+            "type": "leaf",
+            "state": {
+              "type": "git-view",
+              "state": {},
+              "icon": "git-pull-request",
+              "title": "Source Control"
+            }
+          }
+        ],
+        "currentTab": 5
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:打开快速切换": false,
+      "graph:查看关系图谱": false,
+      "canvas:新建白板": false,
+      "daily-notes:打开/创建今天的日记": false,
+      "templates:插入模板": false,
+      "command-palette:打开命令面板": false,
+      "bases:新建数据库": false,
+      "obsidian-importer:Open Importer": false,
+      "obsidian-git:Open Git source control": false
+    }
+  },
+  "active": "3694bb64a38b949c",
+  "lastOpenFiles": [
+    "未确认 585685.crdownload",
+    "B站视频-Obsidian配置AI-Agent.md",
+    "AI 相关知识汇总/大模型介绍.md",
+    "AI 相关知识汇总/AI学习路线图.md",
+    "Clippings/Best Models by Success Rate.md",
+    "Clippings",
+    "2026-04-08.md",
+    "AI 相关知识汇总",
+    "未命名.canvas",
+    "HTML import/大数据.md",
+    "未命名.base",
+    "未命名 1.canvas",
+    "HTML import/Attachments/Image [1].png",
+    "HTML import/Attachments/Image.png",
+    "HTML import/Attachments",
+    "HTML import",
+    "Evernote/YinXiangBiJi - 副本 (1)/_resources/Lambda架构，Kappa架构，Unifield架构.resources/unknown_filename.png",
+    "Evernote/YinXiangBiJi - 副本 (1)/_resources/Lambda架构，Kappa架构，Unifield架构.resources/unknown_filename.1.png",
+    "Evernote/YinXiangBiJi - 副本 (1)/_resources/Lambda架构，Kappa架构，Unifield架构.resources",
+    "Evernote/YinXiangBiJi - 副本 (1)/_resources/解释执行和编译执行的区别？.resources/unknown_filename.png",
+    "Evernote/YinXiangBiJi - 副本 (1)/_resources/解释执行和编译执行的区别？.resources/unknown_filename.2.png",
+    "Evernote/YinXiangBiJi - 副本 (1)/_resources/解释执行和编译执行的区别？.resources/unknown_filename.1.png",
+    "Evernote/YinXiangBiJi - 副本 (1)/_resources/解释执行和编译执行的区别？.resources",
+    "Evernote/YinXiangBiJi - 副本 (1)/_resources/进制换算.resources/unknown_filename.png",
+    "Evernote/YinXiangBiJi - 副本 (1)/_resources/进制换算.resources",
+    "Evernote/YinXiangBiJi - 副本 (1)/_resources/数据结构-链表.resources/unknown_filename.png",
+    "Evernote/YinXiangBiJi - 副本 (1)/_resources/数据结构-链表.resources/unknown_filename.3.png",
+    "Evernote/YinXiangBiJi - 副本 (1)/_resources/数据结构-链表.resources",
+    "Evernote/YinXiangBiJi - 副本 (1)/_resources/链表的操作方法.resources",
+    "llm-wiki.md"
+  ]
+}

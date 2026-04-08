@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(claude mcp:*)",
+      "Bash(cmd.exe:*)",
+      "Bash(powershell.exe:*)",
+      "Bash(where claude.exe)",
+      "Bash(/e/nodeJS/nodejs/claude mcp:*)",
+      "Read(//c/Program Files/Git/bin/**)",
+      "Read(//c/Program Files/Git/usr/bin/**)"
+    ]
+  }
+}
