@@ -11,10 +11,14 @@
             "id": "3694bb64a38b949c",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "关系图谱"
+              "type": "markdown",
+              "state": {
+                "file": "KB/05_Templates/README.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "README"
             }
           }
         ]
@@ -173,8 +177,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -191,35 +194,47 @@
   },
   "active": "3694bb64a38b949c",
   "lastOpenFiles": [
-    "未确认 585685.crdownload",
-    "B站视频-Obsidian配置AI-Agent.md",
-    "AI 相关知识汇总/大模型介绍.md",
+    "KB/05_Templates/daily-template.md",
+    "KB/00_Inbox/README.md",
+    "KB/01_Daily/2026-04-09.md",
+    "KB/README.md",
+    "KB/03_Resources/Articles/2026-04-10-vision-guided-iterative-refinement.md",
+    "KB/02_Areas/README.md",
+    "KB/01_Daily/README.md",
+    "KB/03_Resources/Articles",
+    "KB/fetch.log",
+    "KB/05_Templates/hubtoday-fetch.ps1",
+    "KB/04_Knowledge/README.md",
+    "KB/04_Knowledge/99_Memory.md",
+    "KB/05_Templates/README.md",
+    "KB/05_Templates/concept-card.md",
+    "KB/05_Templates/article-note.md",
+    "KB/03_Resources/README.md",
     "AI 相关知识汇总/AI学习路线图.md",
+    "KB/05_Templates",
+    "KB/04_Knowledge",
+    "KB/03_Resources",
+    "KB/02_Areas",
+    "KB/01_Daily",
+    "KB/00_Inbox",
+    "KB",
+    "AI 相关知识汇总/大模型介绍.md",
+    "B站视频-Obsidian配置AI-Agent.md",
     "Clippings/Best Models by Success Rate.md",
-    "Clippings",
     "2026-04-08.md",
-    "AI 相关知识汇总",
     "未命名.canvas",
     "HTML import/大数据.md",
-    "未命名.base",
     "未命名 1.canvas",
     "HTML import/Attachments/Image [1].png",
     "HTML import/Attachments/Image.png",
-    "HTML import/Attachments",
-    "HTML import",
     "Evernote/YinXiangBiJi - 副本 (1)/_resources/Lambda架构，Kappa架构，Unifield架构.resources/unknown_filename.png",
     "Evernote/YinXiangBiJi - 副本 (1)/_resources/Lambda架构，Kappa架构，Unifield架构.resources/unknown_filename.1.png",
-    "Evernote/YinXiangBiJi - 副本 (1)/_resources/Lambda架构，Kappa架构，Unifield架构.resources",
     "Evernote/YinXiangBiJi - 副本 (1)/_resources/解释执行和编译执行的区别？.resources/unknown_filename.png",
     "Evernote/YinXiangBiJi - 副本 (1)/_resources/解释执行和编译执行的区别？.resources/unknown_filename.2.png",
     "Evernote/YinXiangBiJi - 副本 (1)/_resources/解释执行和编译执行的区别？.resources/unknown_filename.1.png",
-    "Evernote/YinXiangBiJi - 副本 (1)/_resources/解释执行和编译执行的区别？.resources",
     "Evernote/YinXiangBiJi - 副本 (1)/_resources/进制换算.resources/unknown_filename.png",
-    "Evernote/YinXiangBiJi - 副本 (1)/_resources/进制换算.resources",
     "Evernote/YinXiangBiJi - 副本 (1)/_resources/数据结构-链表.resources/unknown_filename.png",
     "Evernote/YinXiangBiJi - 副本 (1)/_resources/数据结构-链表.resources/unknown_filename.3.png",
-    "Evernote/YinXiangBiJi - 副本 (1)/_resources/数据结构-链表.resources",
-    "Evernote/YinXiangBiJi - 副本 (1)/_resources/链表的操作方法.resources",
     "llm-wiki.md"
   ]
 }
