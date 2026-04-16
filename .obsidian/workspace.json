@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ralph/使用 Ralph Agent 的核心好处.md",
+                "file": "KB/README.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "使用 Ralph Agent 的核心好处"
+              "title": "README"
             }
           }
         ]
@@ -195,29 +195,30 @@
   },
   "active": "dc16aeb26f20f8f1",
   "lastOpenFiles": [
-    "ralph/README.md",
-    "ralph/使用 Ralph Agent 的核心好处.md",
-    "KB/05_Templates/concept-card.md",
-    "KB/04_Knowledge/Archon配置指南.md",
-    "ralph",
-    "KB/README.md",
     "KB/05_Templates/README.md",
     "KB/05_Templates/daily-template.md",
+    "KB/05_Templates/concept-card.md",
     "KB/05_Templates/article-note.md",
+    "KB/04_Knowledge/README.md",
+    "KB/04_Knowledge/LangChain-LangGraph-DeepAgents-学习路径.md",
+    "KB/04_Knowledge/Archon配置指南.md",
     "KB/04_Knowledge/99_Memory.md",
     "KB/03_Resources/README.md",
-    "KB/03_Resources/Articles/2026-04-10-vision-guided-iterative-refinement.md",
     "KB/02_Areas/README.md",
     "KB/01_Daily/README.md",
     "KB/01_Daily/2026-04-09.md",
     "KB/00_Inbox/README.md",
-    "未命名.canvas",
+    "KB/README.md",
+    "ralph/使用 Ralph Agent 的核心好处.md",
+    "ralph/README.md",
     "AI 相关知识汇总/大模型介绍.md",
     "AI 相关知识汇总/AI学习路线图.md",
+    "KB/03_Resources/Articles/2026-04-10-vision-guided-iterative-refinement.md",
+    "ralph",
+    "未命名.canvas",
     "KB/03_Resources/Articles",
     "KB/fetch.log",
     "KB/05_Templates/hubtoday-fetch.ps1",
-    "KB/04_Knowledge/README.md",
     "KB/05_Templates",
     "KB/04_Knowledge",
     "KB/03_Resources",
