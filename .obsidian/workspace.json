@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "KB/04_Knowledge/Archon配置指南.md",
+                "file": "ralph/使用 Ralph Agent 的核心好处.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Archon配置指南"
+              "title": "使用 Ralph Agent 的核心好处"
             }
           }
         ]
@@ -196,12 +196,13 @@
   "active": "dc16aeb26f20f8f1",
   "lastOpenFiles": [
     "ralph/README.md",
+    "ralph/使用 Ralph Agent 的核心好处.md",
+    "KB/05_Templates/concept-card.md",
+    "KB/04_Knowledge/Archon配置指南.md",
     "ralph",
     "KB/README.md",
-    "KB/04_Knowledge/Archon配置指南.md",
     "KB/05_Templates/README.md",
     "KB/05_Templates/daily-template.md",
-    "KB/05_Templates/concept-card.md",
     "KB/05_Templates/article-note.md",
     "KB/04_Knowledge/99_Memory.md",
     "KB/03_Resources/README.md",
