@@ -14,7 +14,7 @@ institution: Cornell University
 
 大语言模型的代码生成通常依赖多阶段「人类参与」的迭代优化——这种方式有效但成本高昂，尤其是在前端 Web 开发领域，因为解决方案质量取决于渲染后的视觉输出。
 
-我们提出一个**全自动的 critic-in-the-loop 框架**：视觉语言模型作为视觉批评者，对渲染后的网页提供结构化反馈，引导生成代码的迭代优化。
+我们提出一个**全自动的 critic-in-the-loop 框架**:视觉语言模型作为视觉批评者，对渲染后的网页提供结构化反馈，引导生成代码的迭代优化。
 
 在 WebDev Arena 数据集的真实用户请求测试中，该方法实现了解决方案质量的一致性提升，**经过三次迭代优化后性能提升高达 17.8%**。
 
@@ -24,7 +24,7 @@ institution: Cornell University
 
 ## 核心问题
 
-传统 LLM 代码生成的痛点：
+传统 LLM 代码生成的痛点:
 - 依赖多阶段人类参与
 - 成本高昂
 - 前端开发质量取决于渲染后的视觉输出
@@ -40,7 +40,7 @@ institution: Cornell University
 
 ### 关键创新
 
-使用视觉语言模型（VLM）作为「视觉批评者」：
+使用视觉语言模型（VLM）作为「视觉批评者」:
 - 对渲染后的网页进行视觉分析
 - 提供结构化反馈
 - 引导代码的迭代优化
@@ -55,7 +55,7 @@ institution: Cornell University
 | 3轮迭代 | **+17.8%** |
 | LoRA 微调（无 critic） | +25% 的 critic 收益 |
 
-**关键发现：** LoRA 微调可以将 critic 的能力内化，实现「无 critic 推理」
+**关键发现:** LoRA 微调可以将 critic 的能力内化，实现「无 critic 推理」
 
 ## 核心结论
 
@@ -79,4 +79,4 @@ institution: Cornell University
 
 ---
 
-*捕获自：https://arxiv.org/abs/2604.05839*
+*捕获自:https://arxiv.org/abs/2604.05839*
