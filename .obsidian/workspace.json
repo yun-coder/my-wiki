@@ -4,16 +4,20 @@
     "type": "split",
     "children": [
       {
-        "id": "61d3bea1539dd339",
+        "id": "087a9674612c6b4b",
         "type": "tabs",
         "children": [
           {
-            "id": "3694bb64a38b949c",
+            "id": "dc16aeb26f20f8f1",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
+<<<<<<< HEAD
                 "file": "KB/04_Knowledge/99_Memory.md",
+=======
+                "file": "KB/README.md",
+>>>>>>> e2459b9984f7ddca34700eb9cb7684e0e36765b2
                 "mode": "source",
                 "source": false
               },
@@ -168,7 +172,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -181,8 +186,9 @@
       "bases:新建数据库": false
     }
   },
-  "active": "3694bb64a38b949c",
+  "active": "dc16aeb26f20f8f1",
   "lastOpenFiles": [
+<<<<<<< HEAD
     "KB/05_Templates/article-note.md",
     "KB/05_Templates/concept-card.md",
     "KB/05_Templates/daily-template.md",
@@ -191,27 +197,48 @@
     "KB/01_Daily/2026-04-09.md",
     "KB/README.md",
     "KB/03_Resources/Articles/2026-04-10-vision-guided-iterative-refinement.md",
+=======
+    "KB/05_Templates/README.md",
+    "KB/05_Templates/daily-template.md",
+    "KB/05_Templates/concept-card.md",
+    "KB/05_Templates/article-note.md",
+    "KB/04_Knowledge/README.md",
+    "KB/04_Knowledge/LangChain-LangGraph-DeepAgents-学习路径.md",
+    "KB/04_Knowledge/Archon配置指南.md",
+    "KB/04_Knowledge/99_Memory.md",
+    "KB/03_Resources/README.md",
+>>>>>>> e2459b9984f7ddca34700eb9cb7684e0e36765b2
     "KB/02_Areas/README.md",
     "KB/01_Daily/README.md",
+    "KB/01_Daily/2026-04-09.md",
+    "KB/00_Inbox/README.md",
+    "KB/README.md",
+    "ralph/使用 Ralph Agent 的核心好处.md",
+    "ralph/README.md",
+    "AI 相关知识汇总/大模型介绍.md",
+    "AI 相关知识汇总/AI学习路线图.md",
+    "KB/03_Resources/Articles/2026-04-10-vision-guided-iterative-refinement.md",
+    "ralph",
+    "未命名.canvas",
     "KB/03_Resources/Articles",
     "KB/fetch.log",
     "KB/05_Templates/hubtoday-fetch.ps1",
+<<<<<<< HEAD
     "KB/04_Knowledge/README.md",
     "KB/04_Knowledge/99_Memory.md",
     "KB/03_Resources/README.md",
     "AI 相关知识汇总/AI学习路线图.md",
+=======
+>>>>>>> e2459b9984f7ddca34700eb9cb7684e0e36765b2
     "KB/05_Templates",
     "KB/04_Knowledge",
     "KB/03_Resources",
     "KB/02_Areas",
     "KB/01_Daily",
     "KB/00_Inbox",
-    "KB",
-    "AI 相关知识汇总/大模型介绍.md",
     "B站视频-Obsidian配置AI-Agent.md",
     "Clippings/Best Models by Success Rate.md",
     "2026-04-08.md",
-    "未命名.canvas",
     "HTML import/大数据.md",
     "未命名 1.canvas",
     "HTML import/Attachments/Image [1].png",

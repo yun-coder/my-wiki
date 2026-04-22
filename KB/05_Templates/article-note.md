@@ -38,4 +38,4 @@ publish_date:
 #article #领域
 
 ---
-*捕获自：{{source_url}}*
+*捕获自:{{source_url}}*
