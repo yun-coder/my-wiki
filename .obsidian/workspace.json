@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ralph/README.md",
+                "file": "KB/README.md",
                 "mode": "source",
                 "source": false
               },
@@ -185,6 +185,16 @@
   },
   "active": "5a87e9bdd9f3c8cb",
   "lastOpenFiles": [
-    "ralph/使用 Ralph Agent 的核心好处.md"
+    "KB/03_Resources/Articles/Ralph.md",
+    "KB/03_Resources/Articles/2026-04-10-vision-guided-iterative-refinement.md",
+    "KB/03_Resources/Skills/workflow-engineer.md",
+    "KB/03_Resources/Skills/verification-before-completion.md",
+    "KB/03_Resources/Skills/test-driven-development.md",
+    "KB/03_Resources/Skills/systematic-debugging.md",
+    "KB/03_Resources/Skills/ralph-loop.md",
+    "KB/03_Resources/Skills/karpathy-coding-principles.md",
+    "KB/03_Resources/Skills/fullstack-development.md",
+    "KB/03_Resources/Skills/brainstorming.md",
+    "KB/03_Resources/Articles/使用 Ralph Agent 的核心好处.md"
   ]
 }
