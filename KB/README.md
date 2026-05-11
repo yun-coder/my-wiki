@@ -38,7 +38,7 @@ LLM 自己维护一个 Markdown Wiki，在处理信息时不断编译、更新�
 | `01_Daily/`     | 每日笔记，日程、反思           |
 | `02_Areas/`     | 领域追踪:项目、目标、AI 技术追踪 ⭐ |
 | `03_Resources/` | 原始资料:文章、播客、书籍笔记      |
-| `04_Knowledge/` | **核心**:AI 编译的永久笔记    |
+| `04_Knowledge/` | **核心**:AI 编译的永久笔记（Projects/Papers/Notes/Skills） |
 | `05_Templates/` | 笔记模板                 |
 
 ## ⚠️ 内容规则

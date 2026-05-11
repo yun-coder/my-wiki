@@ -20,15 +20,11 @@ Memory (系统提示词的一部分)
 
 ```
 04_Knowledge/
-├── 99_Memory.md          # AI 记忆
-├── Skills/               # 技能文档
-├── Archon配置指南.md
-├── Claude-Financial-Services-项目分析.md
-├── CropVLM-论文分析.md
-├── Hands-On-Large-Language-Models-分析笔记.md
-├── LangChain-LangGraph-DeepAgents-学习路径.md
-├── OpenSeeker-v2-论文分析.md
-├── ... (其他项目分析和论文分析)
+├── 99_Memory.md              # AI 记忆
+├── Projects/                 # 项目分析（14 篇）
+├── Papers/                   # 论文分析（2 篇）
+├── Notes/                    # 学习笔记与知识整理（4 篇）
+└── Skills/                   # 技能文档（7 篇）
 ```
 
 ## 卡片格式示例

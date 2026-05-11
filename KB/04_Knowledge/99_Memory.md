@@ -68,6 +68,7 @@
 
 ## 最近捕获
 
+- 2026-05-11: 知识库文件归档整理
 - 2026-05-11: 优化知识库 README 和模板结构
 - 2026-04-10: Vision-Guided Iterative Refinement 论文笔记
 
