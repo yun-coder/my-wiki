@@ -6,7 +6,7 @@
 
 ```
 03_Resources/
-├── 00_Articles/      # 文章笔记
+├── Articles/         # 文章笔记
 ├── 01_Podcasts/      # 播客笔记
 ├── 02_Videos/        # 视频笔记
 ├── 03_Books/         # 书籍笔记

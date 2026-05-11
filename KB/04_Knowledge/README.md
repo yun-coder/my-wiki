@@ -20,11 +20,15 @@ Memory (系统提示词的一部分)
 
 ```
 04_Knowledge/
-├── 00_Cards/         # 原子笔记 - 最小知识单元
-├── 01_Concepts/      # 概念 - 理解一个主题
-├── 02_Projects/      # 项目知识 - 编译的项目相关知识
-├── 03_Domains/       # 领域知识 - 专业领域积累
-└── 99_Memory.md      # AI 记忆 - 供系统提示词使用 ⭐
+├── 99_Memory.md          # AI 记忆
+├── Skills/               # 技能文档
+├── Archon配置指南.md
+├── Claude-Financial-Services-项目分析.md
+├── CropVLM-论文分析.md
+├── Hands-On-Large-Language-Models-分析笔记.md
+├── LangChain-LangGraph-DeepAgents-学习路径.md
+├── OpenSeeker-v2-论文分析.md
+├── ... (其他项目分析和论文分析)
 ```
 
 ## 卡片格式示例

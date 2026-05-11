@@ -8,9 +8,6 @@
 |------|------|
 | `daily-template.md` | 每日笔记 |
 | `article-note.md` | 文章笔记 |
-| `book-note.md` | 书籍笔记 |
-| `podcast-note.md` | 播客笔记 |
-| `project-note.md` | 项目笔记 |
 | `concept-card.md` | 概念卡片 |
 
 ## 使用方法

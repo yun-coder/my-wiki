@@ -4,7 +4,7 @@
 
 ## 关于我
 
-- **职业**:前端开发工程师
+- **职业**:AI全栈开发工程师
 - **目标**:学习 AI 技术实现商业价值
 - **偏好**:各种技术工具提高开发效率
 
@@ -33,7 +33,9 @@
 ### 信息来源
 
 - [arXiv](https://arxiv.org/) — 最新论文
-- [AI 资讯日报](https://ai.hubtoday.app/) — 每日 AI 新闻
+- [newsnow.busiyi.world](https://newsnow.busiyi.world) — AI 新闻聚合
+- [tophub.today/c/tech](https://tophub.today/c/tech) — 科技热榜
+- [sopilot.net/zh/hot-tweets](https://sopilot.net/zh/hot-tweets) — AI 热推
 - [GitHub Trending](https://github.com/trending) — 项目趋势
 
 ### 学习产出

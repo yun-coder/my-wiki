@@ -28,7 +28,10 @@ YYYY-MM-DD.md  (例如:2026-04-10.md)
 
 ## 自动任务
 
-- 每天 9:00 自动抓取 AI 新闻（hubtoday-fetch.ps1）
+- AI 新闻信息源：
+  - newsnow.busiyi.world
+  - tophub.today/c/tech
+  - sopilot.net/zh/hot-tweets
 - AI 新闻会追加到当日笔记的 `## AI 资讯` 部分
 
 ## 内容规则
