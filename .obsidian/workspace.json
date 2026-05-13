@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "KB/04_Knowledge/Skills/brainstorming.md",
+                "file": "KB/01_Daily/2026-05-12.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "brainstorming"
+              "title": "2026-05-12"
             }
           }
         ]
@@ -185,6 +185,7 @@
   },
   "active": "5a87e9bdd9f3c8cb",
   "lastOpenFiles": [
+    "KB/04_Knowledge/Skills/brainstorming.md",
     "KB/04_Knowledge/Prompts/CATALOG.md",
     "KB/04_Knowledge/Prompts/09-ai-thinking/title-alchemist-thinking.md",
     "KB/04_Knowledge/Prompts/09-ai-thinking/self-critique-master.md",
@@ -211,7 +212,6 @@
     "KB/04_Knowledge/Prompts/08-ai-marketing/geo-business-value-roi-calculator.md",
     "KB/04_Knowledge/Prompts/08-ai-marketing/geo-article-generator.md",
     "KB/04_Knowledge/Prompts/08-ai-marketing/geo-article-rewriter.md",
-    "KB/04_Knowledge/Prompts/08-ai-marketing/ere-framework-content-optimization.md",
     "KB/04_Knowledge/Prompts/08-ai-marketing",
     "KB/04_Knowledge/Prompts/06-ai-content/humanized-writing",
     "KB/04_Knowledge/Prompts/06-ai-content",
