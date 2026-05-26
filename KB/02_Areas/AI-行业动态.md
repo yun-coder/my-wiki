@@ -1,5 +1,46 @@
 # AI 行业动态追踪
 
+## 2026-05-26: Anthropic 首次盈利估值反超 OpenAI，OpenAI 提交 IPO，中国开源三强集体爆发
+
+### 核心趋势
+
+**1. Anthropic 实现历史性双突破**
+- $30B 融资轮即将 close，估值 $900B+，首次超越 OpenAI
+- 首次实现营业利润，Q1 ARR 超 $44B
+- 梵蒂冈发布首份 AI 通谕，Anthropic 联合创始人协助起草，AI 伦理进入全球治理视野
+
+**2. OpenAI 正式提交 IPO 申请**
+- AI 大模型公司上市潮正式开启
+- GPT-5.5 Instant 成为 ChatGPT 默认模型，新增记忆功能
+
+**3. Google I/O 2026 发布 Gemini 3.5 Flash**
+- 多模态能力大幅提升
+- Google Cloud Agentic Toolkit 企业级 API 扩展
+
+**4. SpaceX $45B 超算合作协议**
+- 为 AI 训练基础设施注入巨量算力（22万+ GPU / 300MW）
+- Colossus 1 超算规模继续扩张
+
+**5. 中国开源大模型三强集体爆发**
+- Kimi K2.6（月之暗面）：Artificial Analysis 智能指数开源模型第一，全球第四（仅次于 Anthropic/Google/OpenAI），原生支持 300 子智能体群协作
+- DeepSeek V4 Pro：1.6 万亿参数，MIT 协议，SWE-Bench 追平闭源前沿，Agent 工作负载领先
+- GLM-5.1（智谱 AI）：MIT 协议下 SWE-Bench Pro 得分最高，最干净的开源许可选择
+- Qwen 3.6（阿里）：登顶工具调用（tool-calling）基准
+
+**6. AI 商业化加速**
+- Bloomberg AI 增强简报服务首月创收 $4500 万（环比 +18%）
+- AI 从成本中心转向收入引擎的拐点
+
+**7. 开源生态格局重塑**
+- 开源 LLM 性能全面逼近甚至超越闭源模型
+- MIT 协议成为新的开源标准（DeepSeek V4、GLM-5.1）
+- Agent 场景成为开源模型的主战场
+
+### 其他重要动态
+- Meta Avocado 延迟至 6 月，性能仍不及 GPT-5.5 / Claude Opus 4.7
+- xAI 联合创始人 Babuschkin 独立创业，计划融资 $1B（$5B 估值）
+- Isomorphic Labs（DeepMind 分拆）融资 $2.1B，AI 药物发现成企业级赛道
+
 ## 2026-05-18: 超级周来临——Google I/O 前夜，Anthropic 逼近 $1T 估值，国产大模型调用量超美国两倍
 
 ### 核心趋势
