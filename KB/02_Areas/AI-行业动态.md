@@ -1,5 +1,69 @@
 # AI 行业动态追踪
 
+## 2026-05-27: 编程 Agent 全面爆发，AI 自造 AI 里程碑，定价战白热化
+
+### 核心趋势
+
+**1. AI 自造 AI —— 全球首例**
+- 面壁智能实现 AI 自主构建预训练模型框架，标志 AI 制造 AI 里程碑
+- 国产 AI 在自动化模型研发上取得突破
+
+**2. 编程 Agent 全面爆发**
+- Cursor Composer 2.5（5/18）：79.8% SWE-Bench Multilingual，自研编码模型达 Opus 4.7 / GPT-5.5 水平
+- xAI Grok Build CLI beta（5/14）：首个编程 Agent CLI，2M token 上下文，8 并行子代理
+- 昆仑万维国产 Agent 模型闯入全球第一梯队，适配 OpenClaw / Claude Code / Hermes
+- Qwen 3.7 编程能力全球第二（仅次于 Claude）
+
+**3. Google DeepMind 数学突破**
+- 一口气解决9道埃尔德什数学难题，卡了人类56年
+- AI 在纯数学研究中的能力再次跃升
+
+**4. 定价战白热化**
+- DeepSeek V4-Pro 永久降价至 $0.435/$0.87 每1M tokens（输入端比 Claude Opus 4.7 便宜约8倍）
+- 成为高吞吐编码工作负载的性价比之王
+
+**5. Google Gemini 3.5 Flash（I/O 2026, 5/19）**
+- Agent-first 架构，非 chatbot-first
+- 多数基准超越 3.1 Pro
+- Gemini 3.5 Pro 已在内部使用，预计6月推出
+
+**6. AI 安全成焦点**
+- Apple macOS 26.5 内核漏洞由 Claude AI 安全团队发现并提交
+- Microsoft Copilot Cowork 曝出文件泄露安全漏洞
+- AI 既是安全威胁的放大器，也是安全防御的新工具
+
+**7. Anthropic 账单分离政策（6月15日生效）**
+- Agent SDK 额度与聊天订阅分开计费
+- 针对「订阅套利」（第三方 Agent 框架消耗大量 tokens）的治理措施
+
+**8. 中国 AI 融资加速**
+- 月之暗面完成约20亿美元新融资，估值突破200亿美元
+- 零一汽车完成2亿美元B2轮融资（新能源重卡+智能驾驶）
+- SpaceX IPO 计划6月挂牌，28.5万亿美元市场空间叙事
+
+**9. 基础设施升级**
+- 国家发改委：指导国产大模型加大力度适配国产算力芯片
+- 算电协同成为2026年资本市场重要产业主线，宁夏中卫示范项目投运
+- 华为发布 AI DC 数据基础设施全栈方案
+- 挪威部署2PB华为闪存用于 LLM 训练
+
+**10. 其他重要动态**
+- 卡帕西（Karpathy）在 Anthropic 担任技术员工（MTS）
+- 特斯拉中国将 FSD 更名为「特斯拉辅助驾驶」，10国开放
+- 稚晖君（彭志辉）正式出任上纬新材董事长
+- ima Copilot 全面开放，知识号支持发布 Skill
+
+### 重要工具更新
+- Ollama 0.24：Codex App 集成、MLX 采样器改进、Claude Desktop 支持
+- Cherry Studio 1.9.6：知识库 URL 修复、多轮图像编辑
+- Cursor 3.4：团队可配置 Agent 环境、应用内 PR 审查
+
+### 传闻与未发布
+- Claude Sonnet 4.8、GPT-5.6、Llama 5 均未发布
+- GPT-5.6 预测市场押注6月30日（~80-89% 置信度）
+- Gemini 3.5 Pro 预计6月推出
+- Qwen 3.7 开放权重版（Plus 变体）预计6月中下旬
+
 ## 2026-05-26: Anthropic 首次盈利估值反超 OpenAI，OpenAI 提交 IPO，中国开源三强集体爆发
 
 ### 核心趋势
