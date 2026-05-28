@@ -1,5 +1,58 @@
 # AI 行业动态追踪
 
+## 2026-05-28: RL 后训练民主化，具身智能加速，Agent Skills 框架井喷
+
+### 核心趋势
+
+**1. DeepSeek V4 Orbit 开源 —— RL 后训练民主化里程碑**
+- 轻量级超大规模强化学习后训练框架，单台 8×B200 即可完成万亿参数级模型 RL 后训练
+- 低精度基础模型冻结（INT4/FP4/FP8），仅通过 BF16 适配器传梯度
+- 已验证于 DeepSeek V4、Kimi-K2.6、Qwen3 MoE
+- 前沿 RL 训练从大规模集群中解放出来
+
+**2. 具身智能加速**
+- Wall-OSS-0.5 开源（自变量机器人）：国产预训练具身大模型，后训练不再是必选项
+- Wall-X：通用机器人具身基础模型，含流匹配与 FAST 动作分支
+- 极佳视界全球首创物理 AGI "双金字塔"体系，12 个月冲击物理 AGI 的 GPT-3 时刻
+- Mistral AI 联手空客与宝马进军"实体 AI"新赛道
+
+**3. Agent Skills 框架井喷**
+- 英伟达开源 Polar 框架：AI 编码 Agent 强化学习"零门槛"进化
+- obra/superpowers（GitHub ⭐210K）：Agentic skills 框架 & 软件开发方法论
+- anthropics/skills（GitHub ⭐142K）：Anthropic 公开 Agent Skills 仓库
+- PilotDeck（清华 THUNLP）：任务导向型 AI Agent 生产力平台，原生支持 MCP 协议
+- ECC（GitHub ⭐197K）：Agent 性能优化系统
+
+**4. AI 眼镜硬件融合**
+- 科大讯飞发布讯飞 AI 眼镜，内置 GlassClaw 助理，售价 4299 元
+- Google 夏季将推珊瑚 AI 开发板，离线解锁实时语音翻译
+
+**5. 多模态推理升级**
+- 快手 Keye2.0：将 DSA 注意力引入多模态，开启强化推理新范式
+- Google ThoughtTrace：首次大规模捕捉用户"未言明的想法"
+
+**6. AI 医学突破**
+- 7B 参数医学 AI Agent 打败 o3、GPT-5
+- ESMFold2 正式面世：10 亿开源蛋白质图谱
+
+### 融资动态
+- OpenRouter 完成 1.13 亿美元 B 轮融资：多模型时代的"流量枢纽"
+- MiniMax 全球企业与开发者客户突破百万，近两月 ARR 翻番
+
+### 开源精选
+- Orbit（DeepSeek）— 万亿级 RL 后训练
+- LocateAnything（NVIDIA）— 并行框解码，推理吞吐 2.5x
+- DeepSWE — 前沿编码智能体评测基准
+- MOSS-TTS（OpenMOSS）— 开源语音/音效生成模型家族
+
+### 其他重要动态
+- 黄仁勋加入清华大学经管学院顾问委员会
+- 阿里 Qoder 推出 Cloud Agents 全托管平台
+- Mila+DeepMind UNSL 统一多变量神经缩放定律
+- 国产超算压缩模型训练突破 2.16 EFLOP/s
+- DeepSeek 陈德里开发自动研究 Skill，论文人类只动脑 2 小时
+- Robinhood 发布 AI"代理交易"与"代理信用卡"
+
 ## 2026-05-27: 编程 Agent 全面爆发，AI 自造 AI 里程碑，定价战白热化
 
 ### 核心趋势
