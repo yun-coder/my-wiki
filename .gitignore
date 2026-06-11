@@ -1,0 +1,33 @@
+# === 操作系统文件 ===
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.tmp
+*.swp
+*.swo
+*~
+
+# === IDE ===
+.idea/
+
+# === Obsidian ===
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.trash/
+
+# === Claude Code ===
+.claude/settings.local.json
+
+# === Python ===
+__pycache__/
+*.py[cod]
+*.egg-info/
+.Python
+venv/
+.venv/
+
+# === Node (如有) ===
+node_modules/
+
+# === 脚本缓存 ===
+KB/scripts/cache/
