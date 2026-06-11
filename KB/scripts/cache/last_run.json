@@ -1,0 +1,79 @@
+{
+  "collected_at": "2026-06-11T12:05:21.778269+08:00",
+  "sources": {
+    "chrome-bookmarks": 8,
+    "机器之心": 0,
+    "量子位": 10,
+    "AIBase基地": 10,
+    "Hugging Face 博客": 10
+  },
+  "total_unique": 11,
+  "items": [
+    {
+      "title": "实测小米最快1T大模型：吞吐量每秒1000+ Tokens，Vibe Coding七秒交付",
+      "url": "https://www.qbitai.com/2026/06/434225.html",
+      "source": "量子位",
+      "published": ""
+    },
+    {
+      "title": "谷歌I/O最出圈的一幕，发生在抖音？？？",
+      "url": "https://www.qbitai.com/2026/06/434267.html",
+      "source": "量子位",
+      "published": ""
+    },
+    {
+      "title": "行业首创AI志愿填报+真人专家验真，百度全新升级高考服务",
+      "url": "https://www.qbitai.com/2026/06/434268.html",
+      "source": "量子位",
+      "published": ""
+    },
+    {
+      "title": "中国第一、全球第二！HiDream-O1-Image-1.5 登顶文生图榜单，超越谷歌、英伟达",
+      "url": "https://www.qbitai.com/2026/06/434196.html",
+      "source": "量子位",
+      "published": ""
+    },
+    {
+      "title": "东风联手九识，商用无人车也有“HI模式”了",
+      "url": "https://www.qbitai.com/2026/06/433956.html",
+      "source": "量子位",
+      "published": ""
+    },
+    {
+      "title": "樊登:千问帮助考生家庭穿越信息迷雾，“看清问题”作出选择",
+      "url": "https://news.aibase.com/zh/news/28846",
+      "source": "AIBase基地",
+      "published": ""
+    },
+    {
+      "title": "抢滩海外市场：Anthropic 在日本力推 Claude 自动化编程服务",
+      "url": "https://news.aibase.com/zh/news/28845",
+      "source": "AIBase基地",
+      "published": ""
+    },
+    {
+      "title": "谷歌发布新版 NotebookLM:全面升级 Gemini3.5Flash 并引入独立云端计算机与 AI 代理",
+      "url": "https://news.aibase.com/zh/news/28844",
+      "source": "AIBase基地",
+      "published": ""
+    },
+    {
+      "title": "小米技术团队进击AI编程：MiMo Code正式开源",
+      "url": "https://news.aibase.com/zh/news/28843",
+      "source": "AIBase基地",
+      "published": ""
+    },
+    {
+      "title": "华纳音乐正式收购Sureel AI：为音乐人构筑版权防火墙",
+      "url": "https://news.aibase.com/zh/news/28842",
+      "source": "AIBase基地",
+      "published": ""
+    },
+    {
+      "title": "冲刺港股：海清智元欲成“物理AI第一股”",
+      "url": "https://news.aibase.com/zh/news/28841",
+      "source": "AIBase基地",
+      "published": ""
+    }
+  ]
+}

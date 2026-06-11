@@ -1,43 +1,17 @@
-# Daily - 每日笔记
+# 01_Daily — 每日笔记
 
-> 记录每天的想法、日程、反思。
-
-## 文件命名规范
-
-```
-YYYY-MM-DD.md  (例如:2026-04-10.md)
-```
+每天的 AI 资讯简报也存这里，命名 `<YYYY-MM-DD>-ai-digest.md`。
 
 ## 模板
 
 ```markdown
-# {{date}} Daily
+# {{日期}} AI 资讯
 
-## 今日完成
-- 
+> 来源：Chrome「AI 资讯」+ last30days + newsnow + sopilot
+> 蒸馏：cron 12:00 自动跑
 
-## 思考
-- 
-
-## 明日待办
-- [ ] 
-
-## 捕获箱
-- 
+## 1. {{标题}}
+- **来源**:
+- **摘要**:
+- **值得加入**: [ ] 1 [ ] 2 [ ] 3
 ```
-
-## 自动任务
-
-- AI 新闻信息源：
-  - newsnow.busiyi.world
-  - tophub.today/c/tech
-  - sopilot.net/zh/hot-tweets
-- AI 新闻会追加到当日笔记的 `## AI 资讯` 部分
-
-## 内容规则
-
-- 使用中文编写（除专业术语外）
-- 保持简洁
-
----
-*由 AI 知识库系统管理*

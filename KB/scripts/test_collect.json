@@ -1,0 +1,241 @@
+{
+  "collected_at": "2026-06-10T19:29:03.157951+08:00",
+  "sources": {
+    "chrome-bookmarks": 8,
+    "机器之心": 0,
+    "量子位": 10,
+    "AIBase基地": 10,
+    "Hugging Face 博客": 10
+  },
+  "total_unique": 38,
+  "items": [
+    {
+      "title": "X (Twitter)",
+      "url": "https://x.com/home",
+      "source": "chrome-bookmarks",
+      "folder": "书签栏 / AI资讯"
+    },
+    {
+      "title": "Reddit",
+      "url": "https://www.reddit.com/?feed=home",
+      "source": "chrome-bookmarks",
+      "folder": "书签栏 / AI资讯"
+    },
+    {
+      "title": "机器之心",
+      "url": "https://www.jiqizhixin.com/",
+      "source": "chrome-bookmarks",
+      "folder": "书签栏 / AI资讯"
+    },
+    {
+      "title": "量子位",
+      "url": "https://www.qbitai.com/",
+      "source": "chrome-bookmarks",
+      "folder": "书签栏 / AI资讯"
+    },
+    {
+      "title": "AIBase基地",
+      "url": "https://www.aibase.com/zh",
+      "source": "chrome-bookmarks",
+      "folder": "书签栏 / AI资讯"
+    },
+    {
+      "title": "何夕2077个人站",
+      "url": "https://hex2077.dev/",
+      "source": "chrome-bookmarks",
+      "folder": "书签栏 / AI资讯"
+    },
+    {
+      "title": "Hugging Face 博客",
+      "url": "https://huggingface.co/blog/zh",
+      "source": "chrome-bookmarks",
+      "folder": "书签栏 / AI资讯"
+    },
+    {
+      "title": "Zread",
+      "url": "https://zread.ai/",
+      "source": "chrome-bookmarks",
+      "folder": "书签栏 / AI资讯"
+    },
+    {
+      "title": "MEET大会",
+      "url": "https://www.qbitai.com/meet/meet2026/",
+      "source": "量子位",
+      "published": ""
+    },
+    {
+      "title": "抖音征召天下「AI视频英才」！创作者们，这次是真能吃上AI红利了…",
+      "url": "https://www.qbitai.com/2026/06/433832.html",
+      "source": "量子位",
+      "published": ""
+    },
+    {
+      "title": "Claude Fable 5首日实测，杀疯了…",
+      "url": "https://www.qbitai.com/2026/06/433682.html",
+      "source": "量子位",
+      "published": ""
+    },
+    {
+      "title": "刚刚，Claude Mythos 5发布！5000万行代码1天搞定",
+      "url": "https://www.qbitai.com/2026/06/433590.html",
+      "source": "量子位",
+      "published": ""
+    },
+    {
+      "title": "你最该认识的「硅谷CEO」：面试紧张，害怕演讲，管出最赚钱的AI广告公司",
+      "url": "https://www.qbitai.com/2026/06/433517.html",
+      "source": "量子位",
+      "published": ""
+    },
+    {
+      "title": "DeepSeek开招土木老哥：自建GW级数据中心",
+      "url": "https://www.qbitai.com/2026/06/432735.html",
+      "source": "量子位",
+      "published": ""
+    },
+    {
+      "title": "英特尔锐炫™ Pro B70 GPU亮相MPTS2026，共探大视听时代AI创作新范式",
+      "url": "https://www.qbitai.com/2026/06/433798.html",
+      "source": "量子位",
+      "published": ""
+    },
+    {
+      "title": "百度智能云与FluxA达成战略合作，共建 Agent 经济全球支付基础设施",
+      "url": "https://www.qbitai.com/2026/06/433516.html",
+      "source": "量子位",
+      "published": ""
+    },
+    {
+      "title": "GPT-5.6首批实测来了！精准狙击Mythos",
+      "url": "https://www.qbitai.com/2026/06/433731.html",
+      "source": "量子位",
+      "published": ""
+    },
+    {
+      "title": "内蒙跑通AI逆袭新解法",
+      "url": "https://www.qbitai.com/2026/06/433565.html",
+      "source": "量子位",
+      "published": ""
+    },
+    {
+      "title": "AI 产品库",
+      "url": "https://aibase.com//app.aibase.com/zh",
+      "source": "AIBase基地",
+      "published": ""
+    },
+    {
+      "title": "MCP 服务",
+      "url": "https://aibase.com//mcp.aibase.com/zh",
+      "source": "AIBase基地",
+      "published": ""
+    },
+    {
+      "title": "模型算力广场",
+      "url": "https://aibase.com//model.aibase.com/zh",
+      "source": "AIBase基地",
+      "published": ""
+    },
+    {
+      "title": "AI 全能力超市",
+      "url": "https://aibase.com//market.aibase.com",
+      "source": "AIBase基地",
+      "published": ""
+    },
+    {
+      "title": "加速AI布局：Meta联手信实工业，在印度投建大型AI数据中心",
+      "url": "https://news.aibase.com/zh/news/28825",
+      "source": "AIBase基地",
+      "published": ""
+    },
+    {
+      "title": "国产AI算力里程碑：摩尔线程发布并开源首个全链路自研代码大模型MusaCoder",
+      "url": "https://news.aibase.com/zh/news/28823",
+      "source": "AIBase基地",
+      "published": ""
+    },
+    {
+      "title": "百度高考服务升级:推出“AI志愿报告”并引入真人专家审核机制",
+      "url": "https://news.aibase.com/zh/news/28822",
+      "source": "AIBase基地",
+      "published": ""
+    },
+    {
+      "title": "字节跳动AI制药业务拆分：从算法模型到产业实战的跨越",
+      "url": "https://news.aibase.com/zh/news/28819",
+      "source": "AIBase基地",
+      "published": ""
+    },
+    {
+      "title": "滴滴全面接入微信AI生态，开启自然语言召唤时代",
+      "url": "https://news.aibase.com/zh/news/28818",
+      "source": "AIBase基地",
+      "published": ""
+    },
+    {
+      "title": "​美图秀秀入局微信AI生态 多家平台同步完成首批接入",
+      "url": "https://news.aibase.com/zh/news/28817",
+      "source": "AIBase基地",
+      "published": ""
+    },
+    {
+      "title": "Hugging Face",
+      "url": "https://huggingface.co/",
+      "source": "Hugging Face 博客",
+      "published": ""
+    },
+    {
+      "title": "Models",
+      "url": "https://huggingface.co/models",
+      "source": "Hugging Face 博客",
+      "published": ""
+    },
+    {
+      "title": "Datasets",
+      "url": "https://huggingface.co/datasets",
+      "source": "Hugging Face 博客",
+      "published": ""
+    },
+    {
+      "title": "Spaces",
+      "url": "https://huggingface.co/spaces",
+      "source": "Hugging Face 博客",
+      "published": ""
+    },
+    {
+      "title": "Buckets new",
+      "url": "https://huggingface.co/storage",
+      "source": "Hugging Face 博客",
+      "published": ""
+    },
+    {
+      "title": "Enterprise",
+      "url": "https://huggingface.co/enterprise",
+      "source": "Hugging Face 博客",
+      "published": ""
+    },
+    {
+      "title": "Pricing",
+      "url": "https://huggingface.co/pricing",
+      "source": "Hugging Face 博客",
+      "published": ""
+    },
+    {
+      "title": "HuggingChat",
+      "url": "https://huggingface.co/chat",
+      "source": "Hugging Face 博客",
+      "published": ""
+    },
+    {
+      "title": "Collections",
+      "url": "https://huggingface.co/collections",
+      "source": "Hugging Face 博客",
+      "published": ""
+    },
+    {
+      "title": "Languages",
+      "url": "https://huggingface.co/languages",
+      "source": "Hugging Face 博客",
+      "published": ""
+    }
+  ]
+}
