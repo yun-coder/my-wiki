@@ -31,3 +31,6 @@ node_modules/
 
 # === 脚本缓存 ===
 KB/scripts/cache/
+.obsidian
+.claude
+.idea
