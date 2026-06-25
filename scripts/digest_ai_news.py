@@ -184,7 +184,7 @@ def distill_with_llm(items: list[dict]) -> str:
                 "temperature": 0.3,
                 "max_tokens": 2000,
             },
-            timeout=60,
+            timeout=120,
         )
         
         if r.status_code == 200:
