@@ -26,6 +26,7 @@ from pathlib import Path
 from datetime import datetime
 
 import httpx
+from openai import OpenAI
 
 # 自动加载 .env
 _ENV_PATH = Path(__file__).resolve().parent.parent / '.env'
@@ -89,12 +90,15 @@ def fetch_blog_topics(url: str, title: str) -> list[dict]:
     """抓取博客首页热帖"""
     results = []
     try:
-        r = httpx.get(url, headers={"User-Agent": UA}, timeout=15, follow_redirects=True)
+        r = httpx.get(url, headers={"User-Agent": UA}, timeout=15, follow_redirects=True, verify=False)
         if r.status_code != 200:
             return results
         
-        # 提取文章链接 (针对量子位等站点)
-        links = re.findall(r'href="([^"]+\.html[^\"]*)"', r.text)
+        # 提取文章链接 - 兼容 .html / .md / 纯路径
+        links = re.findall(r'href="([^"]+\.(?:html|md)[^"]*)"', r.text)
+        if not links:
+            # 尝试更通用的链接提取
+            links = re.findall(r'href="(/[\w\-/]+)"', r.text)
         
         for link in links[:10]:  # 最多 10 篇
             if link.startswith('/'):
@@ -109,7 +113,7 @@ def fetch_blog_topics(url: str, title: str) -> list[dict]:
             # 抓取文章标题
             article_title = link.split('/')[-1].replace('-', ' ').replace('_', ' ')
             try:
-                article_r = httpx.get(link, headers={"User-Agent": UA}, timeout=10, follow_redirects=True)
+                article_r = httpx.get(link, headers={"User-Agent": UA}, timeout=10, follow_redirects=True, verify=False)
                 if article_r.status_code == 200:
                     article_titles = re.findall(r'<title[^>]*>([^<]+)</title>', article_r.text, re.IGNORECASE)
                     if article_titles:
@@ -139,15 +143,57 @@ def fetch_aibase_topics() -> list[dict]:
 
 
 def fetch_hf_topics() -> list[dict]:
-    """抓取 HuggingFace 热帖"""
-    return fetch_blog_topics("https://huggingface.co/blog", "HuggingFace")
+    """抓取 HuggingFace 热帖 - HF 博客链接格式特殊 (/blog/xxx)"""
+    results = []
+    try:
+        r = httpx.get("https://huggingface.co/blog", headers={"User-Agent": UA}, timeout=15, verify=False)
+        if r.status_code != 200:
+            return results
+        
+        # HF 博客链接格式: /blog/category/name 或 /blog/name
+        links = re.findall(r'href="(/blog/[^"&\s]+)"', r.text)
+        seen = set()
+        for link in links[:15]:
+            if link in seen:
+                continue
+            seen.add(link)
+            full_url = "https://huggingface.co" + link
+            
+            # 跳过导航类链接
+            skip_keywords = ['/blog/feed', '/blog/community']
+            if any(kw in link.lower() for kw in skip_keywords):
+                continue
+            # 至少要有两级路径才算文章
+            parts = [p for p in link.split('/') if p and p != 'blog']
+            if len(parts) < 2:
+                continue
+            
+            title = link.split('/')[-1].replace('-', ' ').replace('_', ' ')
+            try:
+                article_r = httpx.get(full_url, headers={"User-Agent": UA}, timeout=10, verify=False)
+                if article_r.status_code == 200:
+                    article_titles = re.findall(r'<title[^>]*>([^<]+)</title>', article_r.text, re.IGNORECASE)
+                    if article_titles:
+                        title = article_titles[0].split(' – ')[0].split(' - ')[0].strip()
+            except Exception:
+                pass
+            
+            results.append({
+                "source": "HuggingFace",
+                "title": title,
+                "url": full_url,
+            })
+    except Exception:
+        pass
+    
+    return results
 
 
 def distill_with_llm(items: list[dict]) -> str:
-    """调 LLM 蒸馏成 5-10 条精华"""
+    """调 LLM 蒸馏成 5-10 条精华（用 openai SDK，更稳定）"""
     api_key = os.environ.get("AGNES_API_KEY", "")
     base_url = os.environ.get("AGNES_BASE_URL", "https://apihub.agnes-ai.com/v1")
-    model = os.environ.get("AGNES_MODEL", "agnes-2.0-flash")
+    model = os.environ.get("AGNES_MODEL", "agnes-1.5-flash")
     
     if not api_key:
         return None
@@ -169,30 +215,17 @@ def distill_with_llm(items: list[dict]) -> str:
 4. 排除重复/低价值内容"""
     
     try:
-        r = httpx.post(
-            f"{base_url}/chat/completions",
-            headers={
-                "Authorization": f"Bearer {api_key}",
-                "Content-Type": "application/json",
-            },
-            json={
-                "model": model,
-                "messages": [
-                    {"role": "system", "content": "你是专业的 AI 资讯编辑，擅长从大量候选中精选最有价值的资讯。"},
-                    {"role": "user", "content": prompt},
-                ],
-                "temperature": 0.3,
-                "max_tokens": 2000,
-            },
-            timeout=120,
+        client = OpenAI(api_key=api_key, base_url=base_url, timeout=180.0)
+        response = client.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": "你是专业的 AI 资讯编辑，擅长从大量候选中精选最有价值的资讯。"},
+                {"role": "user", "content": prompt},
+            ],
+            temperature=0.3,
+            max_tokens=2000,
         )
-        
-        if r.status_code == 200:
-            data = r.json()
-            return data["choices"][0]["message"]["content"]
-        else:
-            print(f"LLM 失败 (HTTP Error {r.status_code})", file=sys.stderr)
-            return None
+        return response.choices[0].message.content
     except Exception as e:
         print(f"LLM 异常: {e}", file=sys.stderr)
         return None
