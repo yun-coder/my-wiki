@@ -20,3 +20,4 @@
 | 8 | Zread | https://zread.ai/ | AI 资讯聚合 |
 | 9 | 观猹 | https://watcha.cn/ | AI 内容平台 |
 | 10 | Vibe Coding 雷达 | https://radar.lyihub.com/?track=fun | AI 开发工具雷达 |
+| 11 | last30days-skill | https://github.com/mvanhorn/last30days-skill | 跨平台 AI 动态聚合技能（Reddit/X/YouTube/HN） |
