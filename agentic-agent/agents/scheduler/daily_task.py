@@ -37,7 +37,7 @@ logger = logging.getLogger("daily_task")
 # ============================================================================
 
 SOURCE_FILE = "AI资讯_信息源列表.md"
-SOURCE_CATEGORY = "02-工具"
+SOURCE_CATEGORY = "00-overview"
 
 
 def extract_links_from_md(md_path: str) -> List[Dict[str, str]]:
@@ -111,17 +111,11 @@ class DailyTaskRunner:
             logger.warning("没有成功爬取的页面，任务结束")
             return
 
-        # Step 2: 分析
-        results = self._analyze_pages(pages)
-        if not results:
-            logger.warning("分析结果为空，任务结束")
-            return
-
-        # Step 3: 验证 + 存档
-        self._validate_and_archive(results)
+        logger.info(f"\n⏭️ Step 2-3 已跳过（知识库归档功能已禁用）")
+        logger.info(f"  如需恢复，需重建 AI知识库 分类目录（01-模型/02-工具/03-项目/04-视频）")
 
         elapsed = time.time() - start_time
-        logger.info(f"\n✅ 每日任务完成，耗时 {elapsed:.1f} 秒")
+        logger.info(f"\n✅ 信息采集完成（仅抓取，未归档），耗时 {elapsed:.1f} 秒")
 
     def _load_source_links(self) -> List[Dict]:
         """从知识库读取信息源链接。"""

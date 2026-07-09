@@ -439,7 +439,7 @@ def fetch_github_weekly_ai() -> list[dict]:
 
 def load_info_sources() -> list[dict]:
     """从知识库读取信息源列表"""
-    source_path = KB_DIR / "02-工具" / "AI资讯_信息源列表.md"
+    source_path = KB_DIR / "00-overview" / "AI资讯_信息源列表.md"
     if not source_path.exists():
         print("  [sources] 信息源文件不存在")
         return []
@@ -541,153 +541,7 @@ def fetch_source_articles(source: dict, max_articles: int = 5) -> list[dict]:
 
 
 # ══════════════════════════════════════════════════════════════════
-# Part 4: LLM 蒸馏 → 知识库归档
-# ══════════════════════════════════════════════════════════════════
-
-def distill_and_archive(hex2077_result: Optional[dict],
-                         github_repos: list[dict],
-                         source_articles: list[dict]) -> list[str]:
-    """用 LLM 蒸馏采集内容，提取知识点并归档到 AI知识库"""
-    print("\n  [distill] LLM 蒸馏中...")
-
-    # 构造输入
-    parts = []
-    if hex2077_result:
-        parts.append(f"=== HEX2077 日报 ===\n{hex2077_result['content'][:3000]}")
-    if github_repos:
-        repo_text = "\n".join([
-            f"- [{r['title']}]({r['url']}) ⭐{r['stars_today']}/日 | {r.get('language','')} | {r['description'][:100]}"
-            for r in github_repos[:20]
-        ])
-        parts.append(f"=== GitHub Trending ===\n{repo_text}")
-    if source_articles:
-        art_text = "\n".join([
-            f"- [{a['title']}]({a['url']}) — {a['source']}"
-            for a in source_articles[:15]
-        ])
-        parts.append(f"=== 信息源精选 ===\n{art_text}")
-
-    combined = "\n\n".join(parts)
-    if not combined.strip():
-        print("  [distill] 无内容可蒸馏")
-        return []
-
-    prompt = f"""你是一个 AI 知识整理专家。从以下采集内容中提取有价值的知识点，归档到个人知识库。
-
-采集内容:
-{combined}
-
-请按 JSON 格式输出（只输出 JSON，不要其他文字）:
-{{
-  "knowledge_points": [
-    {{
-      "title": "知识点标题",
-      "category": "分类（01-模型|02-工具|03-项目|04-视频）",
-      "summary": "一句话摘要（30 字内）",
-      "content": "结构化内容（Markdown 格式，包含关键信息、工具名、使用方式等）",
-      "tags": ["标签1", "标签2"],
-      "source_url": "来源 URL"
-    }}
-  ]
-}}
-
-要求:
-1. 每个知识点须有实质内容，避免空泛
-2. category 从 01-模型、02-工具、03-项目 中选择
-3. source_url 必须有真实来源
-4. 提取 3-8 个知识点"""
-
-    try:
-        result = LLM_CLIENT.complete([
-            {"role": "system", "content": "你是专业的 AI 知识整理专家，擅长从资讯中提取结构化知识点。"},
-            {"role": "user", "content": prompt},
-        ], temperature=0.3, max_tokens=4096)
-        text = result.get("content", "")
-
-        # 解析 JSON — 处理 LLM 可能输出 markdown 代码块、额外文字、或截断
-        # 1. 先尝试找 ```json ... ``` 块
-        json_match = re.search(r'```(?:json)?\s*\n({[\s\S]*?})\n\s*```', text)
-        if not json_match:
-            # 2. 直接从第一个 { 到最后一个 }
-            brace_start = text.find('{')
-            brace_end = text.rfind('}')
-            if brace_start != -1 and brace_end > brace_start:
-                json_str = text[brace_start:brace_end + 1]
-                json_match = type('', (), {'group': lambda self, i=0: json_str})()
-        if not json_match:
-            print("  [distill] 无法定位 JSON 响应")
-            print(f"  [distill] 响应前 300 字符: {text[:300]}")
-            return []
-
-        json_str = json_match.group(1) if hasattr(json_match.group(1), '__len__') else json_match.group()
-
-        try:
-            data = json.loads(json_str)
-        except json.JSONDecodeError:
-            # 尝试修复常见 JSON 问题
-            fixed = json_str
-            fixed = re.sub(r',\s*}', '}', fixed)  # 去掉末尾多余的逗号
-            fixed = re.sub(r',\s*]', ']', fixed)
-            # 如果被截断（缺少结尾 ]}），补上
-            if fixed.count('[') > fixed.count(']'):
-                fixed += ']'
-            if fixed.count('{') > fixed.count('}'):
-                fixed += '}'
-            try:
-                data = json.loads(fixed)
-            except json.JSONDecodeError as e2:
-                print(f"  [distill] JSON 解析失败: {e2}")
-                print(f"  [distill] 原始片段: {fixed[:500]}")
-                return []
-        points = data.get("knowledge_points", [])
-
-        # 归档
-        saved = _archive_points(points)
-        print(f"  [distill] 已归档 {len(saved)} 个文件")
-        return saved
-
-    except Exception as e:
-        print(f"  [distill] LLM 异常: {e}")
-        return []
-
-
-def _archive_points(points: list[dict]) -> list[str]:
-    """将知识点写入知识库"""
-    saved = []
-    for kp in points:
-        category = kp.get("category", "02-工具")
-        title = kp.get("title", "未命名")
-        tags = kp.get("tags", [])
-        summary = kp.get("summary", "")
-        content = kp.get("content", "")
-        source_url = kp.get("source_url", "")
-
-        target_dir = KB_DIR / category
-        target_dir.mkdir(parents=True, exist_ok=True)
-
-        safe_name = re.sub(r'[^\w\-_.]', '_', title)[:80]
-        md_path = target_dir / f"{safe_name}.md"
-
-        if md_path.exists():
-            md_path = target_dir / f"{safe_name}_{datetime.now():%Y%m%d_%H%M%S}.md"
-
-        md_path.write_text(
-            f"# {title}\n\n"
-            + (f"**标签**: {' | '.join(tags)}\n\n" if tags else "")
-            + f"> **摘要**: {summary}\n\n"
-            + (f"> 来源: [{source_url}]({source_url})\n" if source_url else "")
-            + f"> 采集日期: {TODAY_STR}\n\n---\n\n"
-            + content,
-            encoding="utf-8",
-        )
-        saved.append(str(md_path))
-        print(f"    ✓ {md_path.name}")
-
-    return saved
-
-
-# ══════════════════════════════════════════════════════════════════
-# Part 5: 写入日报文件
+# Part 4: 写入日报文件
 # ══════════════════════════════════════════════════════════════════
 
 def write_ai_digest(hex2077_result: Optional[dict],
@@ -805,64 +659,6 @@ def write_github_digest(repos: list[dict], weekly_ai: list[dict] = None) -> Opti
     return file_path
 
 
-def rebuild_kb_overview():
-    """重建 AI知识库总览"""
-    categories = {
-        "00-overview": "概览",
-        "01-模型": "AI 模型与平台",
-        "02-工具": "AI 工具与平台",
-        "03-项目": "开源项目",
-        "04-视频": "视频生成专项",
-    }
-
-    lines = ["# AI 知识库总览",
-             "",
-             f"> 自动生成 | 更新: {TODAY_STR}",
-             "",
-             "## 知识库结构",
-             "",
-             "| 目录 | 说明 | 文件数 |",
-             "|------|------|--------|",
-            ]
-
-    for dir_id, desc in categories.items():
-        dir_path = KB_DIR / dir_id
-        count = len(list(dir_path.glob("*.md"))) if dir_path.exists() else 0
-        lines.append(f"| [{dir_id}/]({dir_id}/) | {desc} | {count} |")
-
-    # 检查信息源列表
-    source_path = KB_DIR / "02-工具" / "AI资讯_信息源列表.md"
-    if source_path.exists():
-        sources_present = True
-
-    lines += [
-        "",
-        "## 分类说明",
-        "",
-        "### 01-模型 — AI 模型与平台",
-        "收录各类 AI 模型的技术文档、能力解析和对比分析。",
-        "",
-        "### 02-工具 — AI 工具与平台",
-        "收录 AI 工具、聚合平台和信息源。",
-        "",
-        "### 03-项目 — 开源项目",
-        "收录代码项目、框架和工具链。",
-        "",
-        "### 04-视频 — 视频生成专项",
-        "聚焦视频生成工作流和工具链。",
-        "",
-        "---",
-        "",
-        f"*知识库总览自动生成于 {datetime.now():%Y-%m-%d %H:%M:%S}*",
-    ]
-
-    overview_dir = KB_DIR / "00-overview"
-    overview_dir.mkdir(parents=True, exist_ok=True)
-    path = overview_dir / "AI知识库总览.md"
-    path.write_text("\n".join(lines), encoding="utf-8")
-    print(f"  [总览] 已更新: {path.name}")
-
-
 # ══════════════════════════════════════════════════════════════════
 # Main
 # ══════════════════════════════════════════════════════════════════
@@ -899,13 +695,8 @@ def main():
     else:
         print("  [sources] 快速模式，跳过")
 
-    # ── 4. LLM 蒸馏 + 知识库归档 ──
-    print("\n[4/5] LLM 蒸馏与知识库归档...")
-    if not args.quick:
-        saved = distill_and_archive(hex2077_result, github_repos, source_articles)
-        rebuild_kb_overview()
-    else:
-        print("  [distill] 快速模式，跳过蒸馏和归档")
+    # ── 4. 已跳过 ──（知识库蒸馏归档功能已废弃）
+    print("\n[4/5] 跳过（知识库归档已废弃）")
 
     # ── 5. 写入日报 ──
     print("\n[5/5] 写入日报文件...")
