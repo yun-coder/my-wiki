@@ -85,7 +85,8 @@ except ImportError:
                 temperature=kwargs.get("temperature", 0.3),
                 max_tokens=kwargs.get("max_tokens", 4096),
             )
-            return {"content": resp.choices[0].message.content}
+            content = resp.choices[0].message.content or ""
+            return {"content": content}
     LLM_CLIENT = _FallbackClient()
 
 def _make_http() -> httpx.Client:
@@ -225,8 +226,12 @@ def fetch_hex2077_daily() -> Optional[str]:
             {"role": "system", "content": "你是专业的 AI 资讯编辑，擅长从原始资讯中提取结构化信息。"},
             {"role": "user", "content": prompt},
         ], temperature=0.3, max_tokens=4096)
-        content = result.get("content", "")
+        content = result.get("content", "") or ""
         print(f"  [hex2077] LLM 结构化完成 ({len(content)} 字符)")
+        # 一些模型（如 agnes-2.0-flash）可能因过度推理输出空内容，此时降级
+        if not content.strip():
+            print(f"  [hex2077] LLM 返回空内容，降级使用原始摘要")
+            raise ValueError("LLM returned empty content")
         return {
             "title": latest_title,
             "date": _key if (_key := _date_key(entries[0])) else TODAY_STR,
@@ -355,7 +360,7 @@ def enrich_repos_with_zh_desc(repos: list[dict]) -> list[dict]:
             {"role": "system", "content": "你是一个简洁的技术翻译。"},
             {"role": "user", "content": prompt},
         ], temperature=0.2, max_tokens=2048)
-        text = resp.get("content", "")
+        text = resp.get("content", "") or ""
         # 找第一个 { 到最后一个 }
         a, b = text.find('{'), text.rfind('}')
         if a == -1 or b <= a:
