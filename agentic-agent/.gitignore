@@ -1,8 +1,0 @@
-.env
-__pycache__/
-*.pyc
-state/scraper_cache/
-inbox/
-state/memory.md
-logs/
-*.log

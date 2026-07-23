@@ -1,9 +1,0 @@
-[
-  {
-    "timestamp": "2026-07-01T10:59:08.337110Z",
-    "phase": "analyze",
-    "status": "pass",
-    "summary": "分析 21 个文件, 提取 21 个知识点",
-    "metadata": {}
-  }
-]
