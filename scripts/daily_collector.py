@@ -3,14 +3,14 @@
 daily_collector.py — 每日 AI 资讯 + GitHub Trending 采集器
 
 功能:
-  1. HEX2077 日报抓取 + LLM 结构化 → 01_Daily/{today}-ai-digest.md
-  2. GitHub Trending 抓取             → 01_Daily/{today}-github-trending.md
-  3. 多信息源采集 + LLM 蒸馏          → AI知识库/{category}/*.md
-  4. 重建 AI知识库总览
+  1. 抓取 HEX2077 与多个 AI 信息源
+  2. 抓取 GitHub Trending
+  3. 分析、去重，并按类型与功能点归类
+  4. 持续更新 AI知识库/09-项目分类索引.md 与 10-资讯洞察库.md
 
 用法:
-  python scripts/daily_collector.py            # 全量采集（所有源 + 归档）
-  python scripts/daily_collector.py --quick    # 快速模式（仅日报 + GitHub）
+  python scripts/daily_collector.py            # 全量采集并更新知识库
+  python scripts/daily_collector.py --quick    # 快速模式（核心源 + GitHub）
   python scripts/daily_collector.py --help
 
 依赖:
@@ -19,6 +19,10 @@ daily_collector.py — 每日 AI 资讯 + GitHub Trending 采集器
 
 from __future__ import annotations
 import os, sys, re, json, time, textwrap
+import html as html_lib
+import xml.etree.ElementTree as ET
+from tempfile import NamedTemporaryFile
+from urllib.parse import urljoin, urlparse
 
 # Windows GBK 编码兼容：确保 stdout 使用 UTF-8
 if sys.stdout.encoding and sys.stdout.encoding.lower() in ("gbk", "gb2312", "gb18030"):
@@ -30,6 +34,14 @@ from datetime import datetime, date
 from typing import Optional
 
 import httpx
+try:
+    from .knowledge_curator import (
+        curate_knowledge_base, build_github_summary, NEWS_CATEGORIES
+    )
+except ImportError:  # 直接运行 scripts/daily_collector.py
+    from knowledge_curator import (
+        curate_knowledge_base, build_github_summary, NEWS_CATEGORIES
+    )
 
 # ── 路径 ──────────────────────────────────────────────────────────
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -37,7 +49,10 @@ AGENT_DIR = PROJECT_ROOT / "agentic-agent"
 SCRIPTS_DIR = PROJECT_ROOT / "scripts"
 DAILY_DIR = PROJECT_ROOT / "01_Daily"
 KB_DIR = PROJECT_ROOT / "AI知识库"
-ENV_PATH = AGENT_DIR / ".env"
+ENV_PATHS = (
+    PROJECT_ROOT / ".env",  # 当前知识库的实际配置位置
+    AGENT_DIR / ".env",     # 兼容旧目录结构
+)
 
 # ── 加载 .env ─────────────────────────────────────────────────────
 _ENV_LOADED = False
@@ -45,8 +60,10 @@ def _ensure_env():
     global _ENV_LOADED
     if _ENV_LOADED:
         return
-    if ENV_PATH.exists():
-        for line in ENV_PATH.read_text(encoding="utf-8").splitlines():
+    for env_path in ENV_PATHS:
+        if not env_path.exists():
+            continue
+        for line in env_path.read_text(encoding="utf-8").splitlines():
             line = line.strip()
             if not line or line.startswith("#") or "=" not in line:
                 continue
@@ -74,9 +91,16 @@ except ImportError:
     from openai import OpenAI
     class _FallbackClient:
         def __init__(self):
+            # OpenAI 1.20 passes the removed ``proxies`` argument when it
+            # creates its own httpx client. Supplying one explicitly keeps
+            # the collector compatible with httpx 0.28+.
+            http_client = httpx.Client(
+                timeout=180.0, follow_redirects=True, verify=False
+            )
             self.client = OpenAI(
                 api_key=os.environ.get("AGNES_API_KEY", ""),
                 base_url=os.environ.get("AGNES_BASE_URL", "https://apihub.agnes-ai.com/v1"),
+                http_client=http_client,
             )
             self.model = os.environ.get("AGNES_MODEL", "agnes-2.0-flash")
         def complete(self, messages, **kwargs):
@@ -118,6 +142,155 @@ def _cleanup_and_exit(code=0):
 
 TODAY = date.today()
 TODAY_STR = TODAY.isoformat()  # 2026-07-07
+
+
+def _clean_text(value: str) -> str:
+    """清理从 HTML/LLM 返回的单行文本。"""
+    value = html_lib.unescape(value or "")
+    value = re.sub(r"<[^>]+>", " ", value)
+    return re.sub(r"\s+", " ", value).strip()
+
+
+def _contains_chinese(value: str) -> bool:
+    return bool(re.search(r"[\u4e00-\u9fff]", value or ""))
+
+
+def _atomic_write_text(path: Path, content: str) -> None:
+    """先写临时文件再替换，避免任务中断留下半个日报。"""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with NamedTemporaryFile(
+        mode="w", encoding="utf-8", newline="\n",
+        dir=path.parent, prefix=f".{path.name}.", suffix=".tmp", delete=False
+    ) as tmp:
+        tmp.write(content.rstrip() + "\n")
+        tmp_path = Path(tmp.name)
+    tmp_path.replace(path)
+
+
+def _extract_feed_articles(content: str, source_title: str,
+                           max_articles: int) -> list[dict]:
+    """从 RSS/Atom 中提取真实标题和链接。解析失败时交给 HTML 逻辑。"""
+    try:
+        root = ET.fromstring(content)
+    except ET.ParseError:
+        return []
+
+    articles = []
+    entries = root.findall(".//item")
+    if not entries:
+        entries = [
+            element for element in root.iter()
+            if element.tag.rsplit("}", 1)[-1] == "entry"
+        ]
+    for entry in entries:
+        children = {child.tag.rsplit("}", 1)[-1]: child for child in entry}
+        title_node = children.get("title")
+        link_node = children.get("link")
+        categories = [
+            _clean_text(child.text or "").casefold()
+            for child in entry
+            if child.tag.rsplit("}", 1)[-1] == "category"
+        ]
+        if any("sponsored" in category for category in categories):
+            continue
+        title = _clean_text(title_node.text if title_node is not None else "")
+        link = ""
+        if link_node is not None:
+            link = (link_node.get("href") or link_node.text or "").strip()
+        if len(title) >= 5 and link.startswith(("http://", "https://")):
+            articles.append({
+                "source": source_title,
+                "title": title[:120],
+                "url": link,
+                "snippet": "",
+            })
+        if len(articles) >= max_articles:
+            break
+    return articles
+
+
+def _extract_ai_news_articles(content: str, source_title: str,
+                              max_articles: int) -> list[dict]:
+    """解析 AI News 栏目页，并排除赞助内容与栏目导航。"""
+    articles = []
+    seen = set()
+    cards = re.findall(
+        r'<div[^>]+class="[^"]*\be-loop-item\b[^"]*"[^>]*>(.*?)(?='
+        r'<div[^>]+class="[^"]*\be-loop-item\b|\Z)',
+        content,
+        re.DOTALL | re.IGNORECASE,
+    )
+    for card in cards:
+        if re.search(r'>\s*Sponsored Content\s*<', card, re.IGNORECASE):
+            continue
+        match = re.search(
+            r'<a[^>]+href=["\'](https?://www\.artificialintelligence-news\.com/news/[^"\']+)["\'][^>]*>'
+            r'(.*?)</a>',
+            card,
+            re.DOTALL | re.IGNORECASE,
+        )
+        if not match:
+            continue
+        url = match.group(1).rstrip("/")
+        title = _clean_text(match.group(2))
+        if url in seen or len(title) < 10:
+            continue
+        seen.add(url)
+        articles.append({
+            "source": source_title,
+            "title": title[:120],
+            "url": url,
+            "snippet": "",
+        })
+        if len(articles) >= max_articles:
+            break
+    return articles
+
+
+def deduplicate_articles(articles: list[dict]) -> list[dict]:
+    """按规范化 URL 和标题跨来源去重，保留信息更完整的条目。"""
+    unique = []
+    positions = {}
+    for article in articles:
+        url = (article.get("url") or "").strip()
+        parsed = urlparse(url)
+        canonical_url = parsed._replace(query="", fragment="").geturl().rstrip("/")
+        title = _clean_text(article.get("title", ""))
+        title_key = re.sub(r"[^\w\u4e00-\u9fff]+", "", title).casefold()
+        if not canonical_url.startswith(("http://", "https://")) or len(title_key) < 5:
+            continue
+        key = (parsed.netloc.lower().removeprefix("www."), title_key)
+        url_key = ("url", canonical_url.casefold())
+        existing_index = positions.get(url_key, positions.get(key))
+        candidate = {**article, "title": title, "url": canonical_url}
+        if existing_index is None:
+            positions[url_key] = positions[key] = len(unique)
+            unique.append(candidate)
+            continue
+        existing = unique[existing_index]
+        existing_detail = len(_clean_text(existing.get("summary") or existing.get("snippet", "")))
+        candidate_detail = len(_clean_text(candidate.get("summary") or candidate.get("snippet", "")))
+        if candidate_detail > existing_detail:
+            unique[existing_index] = candidate
+    return unique
+
+
+def _get_with_retry(url: str, attempts: int = 2) -> httpx.Response:
+    """对资讯源的瞬时 TLS/限流错误做一次短重试。"""
+    last_error = None
+    for attempt in range(attempts):
+        try:
+            response = _get_http().get(url)
+            if response.status_code < 500:
+                return response
+            last_error = RuntimeError(f"HTTP {response.status_code}")
+        except Exception as error:
+            last_error = error
+        if attempt + 1 < attempts:
+            time.sleep(0.5)
+    if last_error:
+        raise last_error
+    raise RuntimeError(f"请求失败: {url}")
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -226,12 +399,13 @@ def fetch_hex2077_daily() -> Optional[str]:
             {"role": "system", "content": "你是专业的 AI 资讯编辑，擅长从原始资讯中提取结构化信息。"},
             {"role": "user", "content": prompt},
         ], temperature=0.3, max_tokens=4096)
-        content = result.get("content", "") or ""
+        content = (result.get("content", "") or "").strip()
         print(f"  [hex2077] LLM 结构化完成 ({len(content)} 字符)")
-        # 一些模型（如 agnes-2.0-flash）可能因过度推理输出空内容，此时降级
-        if not content.strip():
-            print(f"  [hex2077] LLM 返回空内容，降级使用原始摘要")
-            raise ValueError("LLM returned empty content")
+        # 只有标题、模板或极短响应都不能算一份日报。
+        content_without_headings = re.sub(r"(?m)^#{1,6}\s+.*$", "", content)
+        if len(_clean_text(content_without_headings)) < 80:
+            print("  [hex2077] LLM 正文不足，尝试使用原始内容")
+            raise ValueError("LLM returned insufficient content")
         return {
             "title": latest_title,
             "date": _key if (_key := _date_key(entries[0])) else TODAY_STR,
@@ -240,12 +414,17 @@ def fetch_hex2077_daily() -> Optional[str]:
         }
     except Exception as e:
         print(f"  [hex2077] LLM 异常: {e}，使用原始摘要")
-        # 降级
+        # 原始页面也没有正文时返回 None，防止落盘空日报。
+        fallback_text = _clean_text(detail_text or snippet)
+        if len(fallback_text) < 80:
+            print("  [hex2077] 原始正文不足，本次跳过该来源")
+            return None
+        # 有足够原文时才降级写入。
         return {
             "title": latest_title,
             "date": _key if (_key := _date_key(entries[0])) else TODAY_STR,
             "source_url": full_url,
-            "content": f"## {latest_title}\n\n{snippet}\n\n> 来源: [{full_url}]({full_url})",
+            "content": f"## {latest_title}\n\n{fallback_text[:3000]}\n\n> 来源: [{full_url}]({full_url})",
         }
 
 
@@ -298,7 +477,7 @@ def fetch_github_trending() -> list[dict]:
 
         # 3. description
         desc_m = re.search(r'<p\s+class="col-9[^"]*"[^>]*>\s*(.*?)\s*</p>', art, re.DOTALL)
-        desc = re.sub(r'<[^>]+>', '', desc_m.group(1)).strip()[:200] if desc_m else ""
+        desc = _clean_text(desc_m.group(1))[:300] if desc_m else ""
 
         # 4. language
         lang_m = re.search(r'itemprop="programmingLanguage"[^>]*>\s*(.*?)\s*</span>', art)
@@ -338,6 +517,8 @@ def categorize_repo(repo: dict) -> str:
     score_creative = sum(1 for k in creative_keywords if k in t)
     score_dev = sum(1 for k in dev_keywords if k in t)
 
+    if score_ai == score_creative == score_dev == 0:
+        return "🛠️ 开发工具"
     if score_ai >= score_creative and score_ai >= score_dev:
         return "🤖 AI / 智能体"
     elif score_creative >= score_dev:
@@ -347,32 +528,126 @@ def categorize_repo(repo: dict) -> str:
 
 
 def enrich_repos_with_zh_desc(repos: list[dict]) -> list[dict]:
-    """用 LLM 批量生成中文简介"""
+    """用 LLM 批量生成中文简介；缺项时使用本地中文降级说明。"""
     if not repos:
         return repos
-    items_text = "\n".join([
-        f"[{i}] {r['title']}: {r['description'][:120]}"
-        for i, r in enumerate(repos)
-    ])
-    prompt = f"你是一个技术翻译。为以下 GitHub 项目生成简洁的中文简介（15 字以内）。\n\n{items_text}\n\n直接输出 JSON: {{\"d\":[{{\"i\":0,\"z\":\"...\"}}]}} 不要其他文字。"
-    try:
-        resp = LLM_CLIENT.complete([
-            {"role": "system", "content": "你是一个简洁的技术翻译。"},
-            {"role": "user", "content": prompt},
-        ], temperature=0.2, max_tokens=2048)
-        text = resp.get("content", "") or ""
-        # 找第一个 { 到最后一个 }
-        a, b = text.find('{'), text.rfind('}')
-        if a == -1 or b <= a:
-            return repos
-        data = json.loads(text[a:b+1])
-        for d in data.get("d", []):
-            idx = d.get("i")
-            if idx is not None and 0 <= idx < len(repos):
-                repos[idx]["zh_desc"] = d.get("z", "")
-    except Exception as e:
-        print(f"  [zh-desc] 警告: {e}")
+
+    # 分批可避免项目较多时 JSON 被模型截断；每一批使用局部索引。
+    for start in range(0, len(repos), 10):
+        batch = repos[start:start + 10]
+        items_text = "\n".join(
+            f"[{i}] {r['full_name']}: {r.get('description', '')[:180]}"
+            for i, r in enumerate(batch)
+        )
+        prompt = (
+            "你是技术编辑。为以下 GitHub 项目各写一句准确、自然的中文简介"
+            "（12—35 个汉字），不得只翻译项目名，也不得漏项。\n\n"
+            f"{items_text}\n\n"
+            '仅输出 JSON：{"d":[{"i":0,"z":"中文简介"}]}'
+        )
+        try:
+            resp = LLM_CLIENT.complete([
+                {"role": "system", "content": "你只输出合法 JSON，不使用 Markdown。"},
+                {"role": "user", "content": prompt},
+            ], temperature=0.2, max_tokens=2048)
+            text = resp.get("content", "") or ""
+            a, b = text.find("{"), text.rfind("}")
+            if a == -1 or b <= a:
+                raise ValueError("LLM 未返回 JSON")
+            data = json.loads(text[a:b + 1])
+            for item in data.get("d", []):
+                idx = item.get("i")
+                zh_desc = _clean_text(str(item.get("z", "")))
+                if isinstance(idx, int) and 0 <= idx < len(batch) and _contains_chinese(zh_desc):
+                    batch[idx]["zh_desc"] = zh_desc[:80]
+        except Exception as e:
+            print(f"  [zh-desc] 第 {start + 1}-{start + len(batch)} 项生成失败: {e}")
+
+    missing = 0
+    for repo in repos:
+        if not _contains_chinese(repo.get("zh_desc", "")):
+            repo["zh_desc"] = _fallback_zh_desc(repo)
+            missing += 1
+    if missing:
+        print(f"  [zh-desc] {missing} 个项目使用本地中文降级说明")
     return repos
+
+
+def _fallback_zh_desc(repo: dict) -> str:
+    """LLM 不可用时仍给出有信息量的中文项目说明。"""
+    text = f"{repo.get('title', '')} {repo.get('description', '')}".lower()
+    rules = [
+        (("agent", "agentic"), "AI 智能体工具与工作流"),
+        (("llm", "gpt", "claude", "model"), "大模型应用与开发项目"),
+        (("chat", "irc", "message"), "开源通信与聊天工具"),
+        (("browser", "web automation"), "浏览器与网页自动化工具"),
+        (("code review", "review"), "自动化代码审查工具"),
+        (("design", "webflow", "framer", "cms"), "设计与内容管理工具"),
+        (("database", "sql"), "数据库管理与 SQL 工具"),
+        (("terminal", "cli"), "命令行与终端效率工具"),
+        (("video", "image", "audio", "music"), "多媒体创作与处理工具"),
+        (("server", "deploy", "self-hosted"), "开源服务与自托管工具"),
+        (("framework", "library", "sdk", "api"), "开发框架与工具库"),
+        (("learn", "book", "course", "cookbook"), "技术学习资料与实践示例"),
+    ]
+    for keywords, description in rules:
+        if any(keyword in text for keyword in keywords):
+            return description
+    language = _clean_text(repo.get("language", ""))
+    return f"{language} 开源项目" if language else "值得关注的开源项目"
+
+
+def analyze_articles_with_llm(articles: list[dict]) -> list[dict]:
+    """对消息做摘要、主题分类和功能/影响标签，失败时保留原始信息。"""
+    if not articles:
+        return articles
+    for start in range(0, len(articles), 10):
+        batch = articles[start:start + 10]
+        payload = "\n".join(
+            f"[{i}] 标题：{item.get('title', '')}\n"
+            f"内容：{_clean_text(item.get('summary') or item.get('snippet', ''))[:500]}"
+            for i, item in enumerate(batch)
+        )
+        prompt = (
+            "分析以下 AI/技术消息。每条输出：一句中文结论（不是标题复述）、"
+            "一个分类、1-3 个功能或影响标签。分类必须取自："
+            f"{'、'.join(NEWS_CATEGORIES)}。\n\n{payload}\n\n"
+            '仅输出 JSON：{"d":[{"i":0,"s":"结论","c":"分类","t":["标签"]}]}'
+        )
+        try:
+            response = LLM_CLIENT.complete([
+                {"role": "system", "content": "你是知识库编辑，只输出合法 JSON，不能漏项。"},
+                {"role": "user", "content": prompt},
+            ], temperature=0.2, max_tokens=4096)
+            text = response.get("content", "") or ""
+            left, right = text.find("{"), text.rfind("}")
+            if left < 0 or right <= left:
+                raise ValueError("LLM 未返回 JSON")
+            data = json.loads(text[left:right + 1])
+            for result in data.get("d", []):
+                index = result.get("i")
+                if not isinstance(index, int) or not 0 <= index < len(batch):
+                    continue
+                summary = _clean_text(str(result.get("s", "")))
+                category = _clean_text(str(result.get("c", "")))
+                tags = [
+                    _clean_text(str(tag)) for tag in result.get("t", [])
+                    if _clean_text(str(tag))
+                ]
+                if _contains_chinese(summary) and len(summary) >= 12:
+                    batch[index]["summary"] = summary[:180]
+                if category in NEWS_CATEGORIES:
+                    batch[index]["category"] = category
+                if tags:
+                    batch[index]["tags"] = tags[:3]
+        except Exception as error:
+            print(f"  [消息分析] 第 {start + 1}-{start + len(batch)} 条分析失败: {error}")
+            for item in batch:
+                if len(_clean_text(item.get("summary") or item.get("snippet", ""))) < 20:
+                    title = _clean_text(item.get("title", ""))
+                    source = _clean_text(item.get("source", "信息源"))
+                    item["summary"] = f"{source} 抓取到“{title}”，待补充正文分析。"
+    return articles
 
 
 def fetch_github_weekly_ai() -> list[dict]:
@@ -409,7 +684,7 @@ def fetch_github_weekly_ai() -> list[dict]:
         title_m = re.search(r'<em[^>]*>\s*(.*?)\s*</em>', art)
         title = re.sub(r'<[^>]+>', '', title_m.group(1)).strip() if title_m else full_name.split("/")[1]
         desc_m = re.search(r'<p\s+class="col-9[^"]*"[^>]*>\s*(.*?)\s*</p>', art, re.DOTALL)
-        desc = re.sub(r'<[^>]+>', '', desc_m.group(1)).strip()[:200] if desc_m else ""
+        desc = _clean_text(desc_m.group(1))[:300] if desc_m else ""
         lang_m = re.search(r'itemprop="programmingLanguage"[^>]*>\s*(.*?)\s*</span>', art)
         lang = lang_m.group(1).strip() if lang_m else ""
         total_m = re.search(r'href="/[^"]*/stargazers"[^>]*>.*?octicon-star.*?</svg>\s*([\d,]+)', art, re.DOTALL | re.IGNORECASE)
@@ -443,21 +718,31 @@ def fetch_github_weekly_ai() -> list[dict]:
 # ══════════════════════════════════════════════════════════════════
 
 def load_info_sources() -> list[dict]:
-    """从知识库读取信息源列表"""
-    source_path = KB_DIR / "00-overview" / "AI资讯_信息源列表.md"
+    """从知识库读取信息源配置表。"""
+    source_path = KB_DIR / "13-AI资讯信息源.md"
     if not source_path.exists():
         print("  [sources] 信息源文件不存在")
         return []
 
     content = source_path.read_text(encoding="utf-8")
+    section = content.split("## 信息源列表", 1)[-1].split("\n## ", 1)[0]
     sources = []
-    for m in re.finditer(r'\|\s*\d+\s*\|\s*(.+?)\s*\|\s*(https?://\S+)\s*\|\s*(.+?)\s*\|', content):
-        title = m.group(1).strip()
-        url = m.group(2).strip()
-        desc = m.group(3).strip()
-        if title == "站点":
+    for line in section.splitlines():
+        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+        if len(cells) < 7 or not cells[0].isdigit() or not cells[2].startswith("http"):
             continue
-        sources.append({"title": title, "url": url, "description": desc})
+        try:
+            max_articles = max(1, min(int(cells[4]), 10))
+        except ValueError:
+            max_articles = 2
+        sources.append({
+            "title": cells[1],
+            "url": cells[2],
+            "source_type": cells[3],
+            "max_articles": max_articles,
+            "enabled": cells[5] == "启用",
+            "description": cells[6],
+        })
 
     print(f"  [sources] 读取到 {len(sources)} 个信息源")
     return sources
@@ -483,6 +768,18 @@ def fetch_source_articles(source: dict, max_articles: int = 5) -> list[dict]:
         "观猹": "https://watcha.cn/",
         "Vibe Coding 雷达": "https://radar.lyihub.com/",
         "last30days-skill": "https://github.com/mvanhorn/last30days-skill",
+        "OpenAI News": "https://openai.com/news/rss.xml",
+        "Anthropic News": "https://www.anthropic.com/news",
+        "Google DeepMind": "https://deepmind.google/blog/rss.xml",
+        "Google Research": "https://research.google/blog/",
+        "BAIR Blog": "https://bair.berkeley.edu/blog/feed.xml",
+        "Microsoft Research": "https://www.microsoft.com/en-us/research/blog/",
+        "NVIDIA Developer Blog": "https://developer.nvidia.com/blog/feed/",
+        "Mozilla.ai": "https://blog.mozilla.ai/rss/",
+        "Linux Foundation AI/ML": "https://www.linuxfoundation.org/blog/tag/ai-ml",
+        "arXiv cs.LG": "https://export.arxiv.org/rss/cs.LG",
+        "arXiv cs.AI": "https://export.arxiv.org/rss/cs.AI",
+        "AI News": "https://www.artificialintelligence-news.com/feed/",
     }
     # 使用已知的文章入口
     if title in known_blog_feeds:
@@ -490,17 +787,46 @@ def fetch_source_articles(source: dict, max_articles: int = 5) -> list[dict]:
 
     articles = []
     try:
-        resp = _get_http().get(url)
+        try:
+            resp = _get_with_retry(url)
+        except Exception:
+            if title != "AI News" or url == source["url"]:
+                raise
+            url = source["url"]
+            resp = _get_with_retry(url)
+        if (resp.status_code != 200 and title == "AI News"):
+            url = source["url"]
+            resp = _get_with_retry(url)
         if resp.status_code != 200:
             return articles
         html = resp.text
 
+        feed_articles = _extract_feed_articles(html, title, max_articles)
+        if feed_articles:
+            return feed_articles
+
+        if title == "AI News":
+            return _extract_ai_news_articles(html, title, max_articles)
+
         # 提取文章链接——干净版：只取看起来像文章/帖子的路径
         # 条件: href 中包含字母数字路径，没有常见文件扩展名
-        all_links = re.findall(r'href="(https?://[^"#]+)"', html)
+        all_links = re.findall(
+            r'<a\b[^>]*href=["\']([^"\'#]+)["\'][^>]*>(.*?)</a>',
+            html, re.DOTALL | re.IGNORECASE
+        )
 
         seen = set()
-        for link in all_links:
+        for link, anchor_html in all_links:
+            link = urljoin(url, html_lib.unescape(link.strip()))
+            if not link.startswith(("http://", "https://")):
+                continue
+            # 一般资讯页只收本站文章，防止把页脚外链当新闻。
+            source_host = urlparse(url).netloc.removeprefix("www.")
+            link_host = urlparse(link).netloc.removeprefix("www.")
+            if source_host and link_host and not (
+                link_host == source_host or link_host.endswith("." + source_host)
+            ):
+                continue
             # 硬过滤：非文章内容
             skip_patterns = [
                 ".jpg", ".png", ".css", ".js", ".ico", ".svg", ".woff", ".ttf",
@@ -510,6 +836,9 @@ def fetch_source_articles(source: dict, max_articles: int = 5) -> list[dict]:
                 "doubleclick.net", "facebook.com/plugins",
                 "twitter.com/share", "x.com/share",
                 "mailto:", "tel:", "javascript:",
+                "/login", "/signin", "/signup", "/register", "/inbox",
+                "/about", "/contact", "/privacy", "/terms", "/tools",
+                "githubassets.com", "workable.com",
             ]
             if any(s in link.lower() for s in skip_patterns):
                 continue
@@ -525,10 +854,19 @@ def fetch_source_articles(source: dict, max_articles: int = 5) -> list[dict]:
             seen.add(link)
 
             # 使用域名前缀区分不同源
-            article_title = link.rstrip("/").split("/")[-1]
-            article_title = article_title.replace("-", " ").replace("_", " ").replace(".html", "").replace(".md", "")
+            article_title = _clean_text(anchor_html)
+            if not article_title:
+                article_title = link.rstrip("/").split("/")[-1]
+                article_title = article_title.replace("-", " ").replace("_", " ")
+                article_title = re.sub(r"\.(html?|md)$", "", article_title, flags=re.IGNORECASE)
             # 不要太短或太长的标题
-            if len(article_title) < 3 or len(article_title) > 100:
+            nav_titles = {
+                "home", "blog", "news", "docs", "github", "huggingface",
+                "首页", "博客", "资讯", "新闻", "更多", "关于我们",
+            }
+            if (len(article_title) < 5 or len(article_title) > 120
+                    or article_title.strip().lower() in nav_titles
+                    or re.fullmatch(r"[\da-f-]{16,}", article_title.strip(), re.IGNORECASE)):
                 continue
 
             articles.append({
@@ -551,9 +889,21 @@ def fetch_source_articles(source: dict, max_articles: int = 5) -> list[dict]:
 
 def write_ai_digest(hex2077_result: Optional[dict],
                      source_articles: list[dict]) -> Optional[Path]:
-    """写入 AI 日报到 01_Daily/"""
+    """旧接口已停用；采集结果必须进入长期知识库。"""
+    raise RuntimeError("01_Daily 日报输出已停用，请使用 curate_knowledge_base")
+    source_articles = [
+        article for article in source_articles
+        if len(_clean_text(article.get("title", ""))) >= 5
+        and article.get("url", "").startswith(("http://", "https://"))
+        and not article.get("title", "").startswith("[需要登录]")
+    ]
+    if hex2077_result:
+        body = _clean_text(hex2077_result.get("content", ""))
+        if len(body) < 80:
+            print("  [日报] HEX2077 正文不足，已从日报中剔除")
+            hex2077_result = None
     if not hex2077_result and not source_articles:
-        print("  [日报] 无内容可写入")
+        print("  [日报] 没有通过质量检查的内容，不创建或覆盖文件")
         return None
 
     DAILY_DIR.mkdir(parents=True, exist_ok=True)
@@ -588,13 +938,14 @@ def write_ai_digest(hex2077_result: Optional[dict],
                 lines.append(f"  > {art['snippet'][:100]}")
         lines.append("")
 
-    file_path.write_text("\n".join(lines), encoding="utf-8")
+    _atomic_write_text(file_path, "\n".join(lines))
     print(f"  [日报] 已写入: {file_path.name}")
     return file_path
 
 
 def write_github_digest(repos: list[dict], weekly_ai: list[dict] = None) -> Optional[Path]:
-    """写入 GitHub 热门项目到 01_Daily/"""
+    """旧接口已停用；项目必须进入分类索引。"""
+    raise RuntimeError("01_Daily GitHub 输出已停用，请使用 curate_knowledge_base")
     if not repos and not weekly_ai:
         print("  [GitHub] 无内容可写入")
         return None
@@ -659,7 +1010,7 @@ def write_github_digest(repos: list[dict], weekly_ai: list[dict] = None) -> Opti
     lines.append("")
     lines.append("*报告自动生成，数据源: GitHub Trending*")
 
-    file_path.write_text("\n".join(lines), encoding="utf-8")
+    _atomic_write_text(file_path, "\n".join(lines))
     print(f"  [GitHub] 已写入: {file_path.name}")
     return file_path
 
@@ -672,7 +1023,7 @@ def main():
     import argparse
     parser = argparse.ArgumentParser(description="每日 AI 资讯 + GitHub Trending 采集器")
     parser.add_argument("--quick", action="store_true",
-                        help="快速模式：仅采集 hex2077 日报 + GitHub Trending，不做蒸馏归档")
+                        help="快速模式：仅采集 HEX2077 + GitHub Trending")
     args = parser.parse_args()
 
     print(f"\n{'='*50}")
@@ -687,6 +1038,7 @@ def main():
     print("\n[2/5] 采集 GitHub Trending...")
     github_repos = fetch_github_trending()
     github_weekly_ai = fetch_github_weekly_ai()
+    github_summary = build_github_summary(github_repos, github_weekly_ai)
 
     # ── 3. 信息源采集 ──
     print("\n[3/5] 采集其他信息源...")
@@ -694,26 +1046,44 @@ def main():
     if not args.quick:
         sources = load_info_sources()
         for src in sources:
-            arts = fetch_source_articles(src)
+            if not src.get("enabled", True):
+                continue
+            arts = fetch_source_articles(src, src.get("max_articles", 2))
             source_articles.extend(arts)
-        print(f"  [sources] 共 {len(source_articles)} 条文章")
+        before_dedup = len(source_articles)
+        source_articles = deduplicate_articles(source_articles)
+        print(f"  [sources] 共 {len(source_articles)} 条文章（去重前 {before_dedup} 条）")
     else:
         print("  [sources] 快速模式，跳过")
 
-    # ── 4. 已跳过 ──（知识库蒸馏归档功能已废弃）
-    print("\n[4/5] 跳过（知识库归档已废弃）")
+    # ── 4. 分析、去重、归类 ──
+    print("\n[4/5] 分析消息并整理知识...")
+    all_repos_by_name = {}
+    for repo in [*github_repos, *github_weekly_ai]:
+        all_repos_by_name[repo["full_name"].lower()] = repo
+    curated_repos = enrich_repos_with_zh_desc(list(all_repos_by_name.values()))
 
-    # ── 5. 写入日报 ──
-    print("\n[5/5] 写入日报文件...")
-    digest_path = write_ai_digest(hex2077_result, source_articles)
-    github_path = write_github_digest(github_repos, github_weekly_ai)
+    knowledge_articles = list(source_articles)
+    if hex2077_result:
+        knowledge_articles.append({
+            "source": "HEX2077",
+            "title": hex2077_result["title"],
+            "url": hex2077_result["source_url"],
+            "summary": hex2077_result["content"],
+        })
+    knowledge_articles = deduplicate_articles(knowledge_articles)
+    knowledge_articles = analyze_articles_with_llm(knowledge_articles)
+
+    # ── 5. 直接更新长期知识库，不再生成 01_Daily 记录 ──
+    print("\n[5/5] 更新 AI 知识库...")
+    project_path, insight_path = curate_knowledge_base(
+        curated_repos, knowledge_articles, github_summary
+    )
 
     print(f"\n{'='*50}")
     print("  ✅ 采集完成!")
-    if digest_path:
-        print(f"  📄 AI 日报: {digest_path.name}")
-    if github_path:
-        print(f"  📄 GitHub:  {github_path.name}")
+    print(f"  📚 项目索引: {project_path.name}")
+    print(f"  🧠 资讯洞察: {insight_path.name}")
     print(f"{'='*50}\n")
 
 

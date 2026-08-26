@@ -4,7 +4,7 @@
 weekly_digest.py — 周度精华提取脚本
 
 流程:
-1. 扫描 D:\学习院\my-wiki\01_Daily\ 目录下所有日报
+1. 扫描项目目录下 01_Daily\ 目录中的所有日报
 2. 读取前 N 天的日报内容
 3. 调 LLM 提取精华知识点，分类归档到 AI知识库/01-04/
 4. 质量验证（5 Gates）
@@ -34,8 +34,9 @@ if _ENV_PATH.exists():
             os.environ[k] = v
 
 
-DAILY_DIR = Path(r'D:\学习院\my-wiki\01_Daily')
-KB_DIR = Path(r'D:\学习院\my-wiki\AI知识库')
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+DAILY_DIR = PROJECT_ROOT / '01_Daily'
+KB_DIR = PROJECT_ROOT / 'AI知识库'
 
 CATEGORY_MAP = {
     '模型': '01-模型',

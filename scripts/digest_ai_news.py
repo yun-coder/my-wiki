@@ -7,7 +7,7 @@ digest_ai_news.py — 每日 AI 资讯采集 + LLM 蒸馏
 1. 读 Chrome 书签「AI资讯」分类
 2. 抓取量子位/AIBase/HuggingFace 首页热帖
 3. 调 Agnes LLM 蒸馏成 5-10 条精华
-4. 写 D:\学习院\my-wiki\01_Daily\<今天>-ai-digest.md
+4. 写入项目目录下的 01_Daily\<今天>-ai-digest.md
 5. 在 stdout 输出推送摘要
 
 用法:
@@ -295,7 +295,7 @@ def main() -> int:
     
     # 3. 写入
     print("[3/4] 写入日报...")
-    daily_dir = Path(r'D:\学习院\my-wiki\01_Daily')
+    daily_dir = Path(__file__).resolve().parent.parent / '01_Daily'
     daily_dir.mkdir(parents=True, exist_ok=True)
     
     today = datetime.now().strftime('%Y-%m-%d')

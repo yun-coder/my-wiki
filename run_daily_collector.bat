@@ -1,9 +1,9 @@
 @echo off
 REM MyWiki Daily Collector Wrapper
 
-cd /d D:\ѧϰԺ\my-wiki
+cd /d "%~dp0"
 
-set LOG_DIR=D:\ѧϰԺ\my-wiki\state\daily\logs
+set LOG_DIR=%~dp0state\daily\logs
 if not exist "%LOG_DIR%" mkdir "%LOG_DIR%"
 
 for /f "tokens=1-3 delims=/- " %%a in ('echo %DATE%') do set TD=%%a%%b%%c
