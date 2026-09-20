@@ -24,10 +24,21 @@ import xml.etree.ElementTree as ET
 from tempfile import NamedTemporaryFile
 from urllib.parse import parse_qsl, urlencode, urljoin, urlparse
 
-# Windows GBK 编码兼容：确保 stdout 使用 UTF-8
-if sys.stdout.encoding and sys.stdout.encoding.lower() in ("gbk", "gb2312", "gb18030"):
-    import io
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+# Windows GBK 编码兼容：优先原地重配置，避免关闭测试运行器的捕获流。
+def ensure_utf8_stdout():
+    stream = sys.stdout
+    encoding = getattr(stream, "encoding", "") or ""
+    if encoding.lower() in ("gbk", "gb2312", "gb18030"):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if callable(reconfigure):
+            reconfigure(encoding="utf-8", errors="replace")
+        elif hasattr(stream, "buffer"):
+            import io
+            sys.stdout = io.TextIOWrapper(stream.buffer, encoding="utf-8", errors="replace")
+    return stream
+
+
+ensure_utf8_stdout()
 
 from pathlib import Path
 from datetime import datetime, date
@@ -75,43 +86,87 @@ def _ensure_env():
 
 _ensure_env()
 
-# ── LLM Client（复用 agentic-agent 的 AgnesClient）────────────────
-try:
-    sys.path.insert(0, str(AGENT_DIR))
-    from agents.core.agnes_client import AgnesClient
-    from agents.core.config import Config as AgentConfig
-    _agent_cfg = AgentConfig.from_env()
-    LLM_CLIENT = AgnesClient(
-        api_key=_agent_cfg.agnes_api_key,
-        base_url=_agent_cfg.agnes_base_url,
-        model=_agent_cfg.agnes_model,
-    )
-except ImportError:
-    # 降级：内联实现
+# ── LLM Client：本地 Ollama 优先，Agnes 作为远程备用 ───────────────
+def select_ollama_model(models: list[str]) -> str:
+    preferred = os.environ.get("OLLAMA_MODEL", "qwen3:8b")
+    if preferred in models:
+        return preferred
+    for candidate in ("qwen3:8b", "qwen2.5:7b"):
+        if candidate in models:
+            return candidate
+    return models[0] if models else preferred
+
+
+def extract_ollama_content(payload: dict) -> str:
+    message = payload.get("message") or {}
+    return (message.get("content") or message.get("thinking") or "").strip()
+
+
+class _OllamaClient:
+    provider = "ollama"
+
+    def __init__(self, base_url: str, model: str):
+        self.base_url = base_url.rstrip("/")
+        self.model = model
+        self.client = httpx.Client(timeout=180.0, follow_redirects=True, verify=False)
+
+    @classmethod
+    def from_local_service(cls):
+        base_url = os.environ.get("OLLAMA_BASE_URL", "http://127.0.0.1:11434")
+        with httpx.Client(timeout=5.0, follow_redirects=True, verify=False) as client:
+            response = client.get(f"{base_url.rstrip('/')}/api/tags")
+            response.raise_for_status()
+        models = [item.get("name", "") for item in response.json().get("models", [])]
+        model = select_ollama_model([name for name in models if name])
+        instance = cls(base_url, model)
+        print(f"  [llm] 使用本地 Ollama: {model}")
+        return instance
+
+    def complete(self, messages, **kwargs):
+        response = self.client.post(
+            f"{self.base_url}/api/chat",
+            json={
+                "model": self.model,
+                "messages": messages,
+                "stream": False,
+                "options": {"temperature": kwargs.get("temperature", 0.3)},
+            },
+        )
+        response.raise_for_status()
+        return {"content": extract_ollama_content(response.json())}
+
+
+def _build_agnes_client():
     from openai import OpenAI
-    class _FallbackClient:
-        def __init__(self):
-            # OpenAI 1.20 passes the removed ``proxies`` argument when it
-            # creates its own httpx client. Supplying one explicitly keeps
-            # the collector compatible with httpx 0.28+.
-            http_client = httpx.Client(
-                timeout=180.0, follow_redirects=True, verify=False
-            )
-            self.client = OpenAI(
-                api_key=os.environ.get("AGNES_API_KEY", ""),
-                base_url=os.environ.get("AGNES_BASE_URL", "https://apihub.agnes-ai.com/v1"),
-                http_client=http_client,
-            )
-            self.model = os.environ.get("AGNES_MODEL", "agnes-2.0-flash")
+
+    http_client = httpx.Client(timeout=180.0, follow_redirects=True, verify=False)
+    client = OpenAI(
+        api_key=os.environ.get("AGNES_API_KEY", ""),
+        base_url=os.environ.get("AGNES_BASE_URL", "https://apihub.agnes-ai.com/v1"),
+        http_client=http_client,
+    )
+
+    class _AgnesClient:
+        provider = "agnes"
+
         def complete(self, messages, **kwargs):
-            resp = self.client.chat.completions.create(
-                model=self.model, messages=messages,
+            response = client.chat.completions.create(
+                model=os.environ.get("AGNES_MODEL", "agnes-2.0-flash"),
+                messages=messages,
                 temperature=kwargs.get("temperature", 0.3),
                 max_tokens=kwargs.get("max_tokens", 4096),
             )
-            content = resp.choices[0].message.content or ""
-            return {"content": content}
-    LLM_CLIENT = _FallbackClient()
+            return {"content": response.choices[0].message.content or ""}
+
+    print("  [llm] Ollama 不可用，使用 Agnes 备用通道")
+    return _AgnesClient()
+
+
+try:
+    LLM_CLIENT = _OllamaClient.from_local_service()
+except Exception as error:
+    print(f"  [llm] 本地 Ollama 不可用: {error}")
+    LLM_CLIENT = _build_agnes_client()
 
 def _make_http() -> httpx.Client:
     """创建带超时和 UA 的 httpx 客户端（每次调用时新建，用完关闭）"""

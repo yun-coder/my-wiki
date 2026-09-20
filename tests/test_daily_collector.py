@@ -24,6 +24,33 @@ class FailingLLM:
 
 
 class DailyCollectorTests(unittest.TestCase):
+    def test_stdout_encoding_is_reconfigured_without_replacing_stream(self):
+        class Stream:
+            encoding = "gbk"
+
+            def __init__(self):
+                self.calls = []
+
+            def reconfigure(self, **kwargs):
+                self.calls.append(kwargs)
+
+        stream = Stream()
+        with patch.object(collector.sys, "stdout", stream):
+            result = collector.ensure_utf8_stdout()
+        self.assertIs(result, stream)
+        self.assertEqual(stream.calls, [{"encoding": "utf-8", "errors": "replace"}])
+
+    def test_ollama_model_selection_prefers_configured_local_model(self):
+        with patch.dict(os.environ, {"OLLAMA_MODEL": "qwen3:8b"}, clear=False):
+            self.assertEqual(
+                collector.select_ollama_model(["qwen2.5:7b", "qwen3:8b"]),
+                "qwen3:8b",
+            )
+
+    def test_ollama_response_content_is_extracted(self):
+        payload = {"message": {"role": "assistant", "content": "本地摘要"}}
+        self.assertEqual(collector.extract_ollama_content(payload), "本地摘要")
+
     def test_chrome_ai_bookmarks_are_loaded_and_classified(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             bookmark_path = Path(temp_dir) / "Bookmarks"
