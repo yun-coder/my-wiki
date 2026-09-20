@@ -1,0 +1,44 @@
+[2026/09/20 ���� 15:49:10.65] Starting daily collector... 
+
+==================================================
+  📡 AI 资讯采集器 — 2026-09-20
+==================================================
+
+[1/5] 采集 HEX2077 AI 日报...
+  [hex2077] 正在获取最新日报...
+  [hex2077] 最新: AI资讯日报 2026/9/20 → https://hex2077.dev/docs/2026-09/2026-09-20/
+  [hex2077] LLM 异常: Error code: 401 - {'error': {'code': '', 'message': 'This token status is unavailable (request id: 20260920074912857798052yTrsRpbu)', 'type': 'AgnesAI_error'}}，使用原始摘要
+
+[2/5] 采集 GitHub Trending...
+  [github] 正在获取 GitHub Trending...
+  [github] 解析到 15 个项目
+  [github-weekly] 正在获取 AI 快速增长项目...
+  [github-weekly] 筛选出 18 个 AI 相关项目
+
+[3/5] 采集其他信息源...
+  [sources] 读取到 21 个信息源
+  [bookmarks] AI资讯读取 22 条: 社交入口=6, 资讯聚合=8, 技术源=4, 社区/工作入口=4
+  [sources] 合并后 40 个信息源（Chrome 书签 22 条）
+    [sources] AI情报局 - 全球 AI 动态简报：OpenAI、Anthropic、Google 每日更新 抓取失败: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1006)
+  [sources] 共 30 条文章（去重前 33 条）
+
+[4/5] 分析消息并整理知识...
+  [zh-desc] 第 1-10 项生成失败: Error code: 401 - {'error': {'code': '', 'message': 'This token status is unavailable (request id: 20260920075011652132501Jvl4T2MJ)', 'type': 'AgnesAI_error'}}
+  [zh-desc] 第 11-20 项生成失败: Error code: 401 - {'error': {'code': '', 'message': 'This token status is unavailable (request id: 20260920075011863118346RLsT1zB4)', 'type': 'AgnesAI_error'}}
+  [zh-desc] 第 21-30 项生成失败: Error code: 401 - {'error': {'code': '', 'message': 'This token status is unavailable (request id: 2026092007501279748027qrOAqe52)', 'type': 'AgnesAI_error'}}
+  [zh-desc] 30 个项目使用本地中文降级说明
+  [消息分析] 第 1-10 条分析失败: Error code: 401 - {'error': {'code': '', 'message': 'This token status is unavailable (request id: 20260920075012280355771TTs5DIky)', 'type': 'AgnesAI_error'}}
+  [消息分析] 第 11-20 条分析失败: Error code: 401 - {'error': {'code': '', 'message': 'This token status is unavailable (request id: 20260920075012487714149XY4BaEkj)', 'type': 'AgnesAI_error'}}
+  [消息分析] 第 21-30 条分析失败: Error code: 401 - {'error': {'code': '', 'message': 'This token status is unavailable (request id: 20260920075012690425738j6VjO5KH)', 'type': 'AgnesAI_error'}}
+  [消息分析] 第 31-31 条分析失败: Error code: 401 - {'error': {'code': '', 'message': 'This token status is unavailable (request id: 20260920075012889728746Y7ak1ta2)', 'type': 'AgnesAI_error'}}
+
+[5/5] 更新 AI 知识库...
+  [导航] 已同步: 知识库导航.md (2026-09-20)
+
+==================================================
+  ✅ 采集完成!
+  📚 项目索引: 09-项目分类索引.md
+  🧠 资讯洞察: 10-资讯洞察库.md
+==================================================
+
+[2026/09/20 ���� 15:50:15.05] Finished with exit code 0 
