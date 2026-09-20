@@ -1,6 +1,7 @@
 import tempfile
 import unittest
 import os
+import json
 from pathlib import Path
 from unittest.mock import patch
 
@@ -23,6 +24,77 @@ class FailingLLM:
 
 
 class DailyCollectorTests(unittest.TestCase):
+    def test_chrome_ai_bookmarks_are_loaded_and_classified(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            bookmark_path = Path(temp_dir) / "Bookmarks"
+            bookmark_path.write_text(json.dumps({
+                "roots": {
+                    "bookmark_bar": {
+                        "children": [
+                            {
+                                "type": "folder",
+                                "name": "AI资讯",
+                                "children": [
+                                    {"type": "url", "name": "AI 热点榜", "url": "https://aihot.news/hot?utm_source=chrome"},
+                                    {"type": "url", "name": "AI 热点榜副本", "url": "https://aihot.news/hot"},
+                                    {"type": "url", "name": "X", "url": "https://x.com/home"},
+                                    {"type": "url", "name": "何夕2077", "url": "https://hex2077.dev/"},
+                                    {"type": "url", "name": "Discord", "url": "https://discord.com/channels/1/2"},
+                                ],
+                            },
+                            {
+                                "type": "folder",
+                                "name": "其他",
+                                "children": [
+                                    {"type": "url", "name": "不应读取", "url": "https://example.com/"},
+                                ],
+                            },
+                        ],
+                    },
+                },
+            }, ensure_ascii=False), encoding="utf-8")
+
+            result = collector.load_chrome_ai_bookmarks(bookmark_path)
+
+        self.assertEqual(len(result), 4)
+        by_title = {item["title"]: item for item in result}
+        self.assertEqual(by_title["AI 热点榜"]["url"], "https://aihot.news/hot")
+        self.assertEqual(by_title["AI 热点榜"]["category"], "资讯聚合")
+        self.assertEqual(by_title["X"]["category"], "社交入口")
+        self.assertEqual(by_title["何夕2077"]["category"], "技术源")
+        self.assertTrue(by_title["Discord"]["observe_only"])
+
+    def test_bookmark_sources_are_merged_into_daily_collection(self):
+        bookmark_sources = [
+            {
+                "title": "AI 热点榜",
+                "url": "https://aihot.news/hot",
+                "category": "资讯聚合",
+                "observe_only": False,
+                "enabled": True,
+            },
+            {
+                "title": "X",
+                "url": "https://x.com/home",
+                "category": "社交入口",
+                "observe_only": True,
+                "enabled": True,
+            },
+        ]
+        with patch.object(collector, "load_info_sources", return_value=[]), \
+                patch.object(collector, "load_chrome_ai_bookmarks", return_value=bookmark_sources):
+            sources = collector.load_all_info_sources()
+
+        self.assertEqual({source["title"] for source in sources}, {"AI 热点榜", "X"})
+        self.assertEqual(collector.fetch_source_articles(bookmark_sources[1]), [])
+
+    def test_scheduler_points_to_current_project(self):
+        task_xml = (collector.PROJECT_ROOT / "MyWikiDailyTask.xml").read_text(encoding="utf-8-sig")
+        legacy_script = (collector.PROJECT_ROOT / "scripts" / "digest_ai_news.py").read_text(encoding="utf-8")
+        self.assertNotIn(r"D:\local-projects\my-wiki", task_xml)
+        self.assertIn("run_daily_collector.bat", task_xml)
+        self.assertIn("daily_collector", legacy_script)
+
     def test_chinese_descriptions_are_complete_when_llm_is_empty(self):
         repos = [
             {

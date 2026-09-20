@@ -70,6 +70,24 @@ class KnowledgeCuratorTests(unittest.TestCase):
         self.assertEqual(len(summary["featured"]), 1)
         self.assertIn("可观测性", summary["featured"][0]["summary"])
 
+    def test_daily_summary_excludes_placeholder_and_login_items(self):
+        summary = curator.build_daily_summary([
+            {
+                "source": "Chrome书签·社交入口",
+                "title": "X Home Feed",
+                "url": "https://x.com/home",
+                "summary": "Chrome书签·社交入口 抓取到“X Home Feed”，待补充正文分析。",
+            },
+            {
+                "source": "测试源",
+                "title": "一个真实的 Agent 工程发布",
+                "url": "https://example.com/agent-release",
+                "summary": "该项目公开了可观测性和失败重试方案，适合纳入工程实践参考。",
+            },
+        ])
+        self.assertEqual(len(summary["featured"]), 1)
+        self.assertEqual(summary["featured"][0]["title"], "一个真实的 Agent 工程发布")
+
     def test_repo_url_is_canonicalized(self):
         self.assertEqual(
             curator.normalize_repo_url("https://github.com/OpenAI/openai-agents-python.git"),

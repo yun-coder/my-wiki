@@ -22,7 +22,7 @@ import os, sys, re, json, time, textwrap
 import html as html_lib
 import xml.etree.ElementTree as ET
 from tempfile import NamedTemporaryFile
-from urllib.parse import urljoin, urlparse
+from urllib.parse import parse_qsl, urlencode, urljoin, urlparse
 
 # Windows GBK 编码兼容：确保 stdout 使用 UTF-8
 if sys.stdout.encoding and sys.stdout.encoding.lower() in ("gbk", "gb2312", "gb18030"):
@@ -717,6 +717,115 @@ def fetch_github_weekly_ai() -> list[dict]:
 # Part 3: 多信息源采集
 # ══════════════════════════════════════════════════════════════════
 
+CHROME_AI_BOOKMARK_FOLDER = "AI资讯"
+CHROME_SOCIAL_HOSTS = {
+    "linkedin.com", "x.com", "twitter.com", "instagram.com",
+    "xiaohongshu.com", "reddit.com", "weibo.com",
+}
+CHROME_TECH_HOSTS = {
+    "hex2077.dev", "zdoc.app", "radar.lyihub.com",
+}
+CHROME_COMMUNITY_HOSTS = {
+    "wearesellers.com", "discord.com", "zsxq.com", "sopilot.net",
+}
+CHROME_TRACKING_PARAMS = {
+    "gclid", "fbclid", "gbraid", "wbraid", "spm", "track",
+}
+
+
+def normalize_bookmark_url(url: str) -> str:
+    """移除常见跟踪参数，保留业务查询参数。"""
+    parsed = urlparse((url or "").strip())
+    if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+        return ""
+    query = [
+        (key, value) for key, value in parse_qsl(parsed.query, keep_blank_values=True)
+        if not key.lower().startswith("utm_") and key.lower() not in CHROME_TRACKING_PARAMS
+    ]
+    normalized = parsed._replace(
+        query=urlencode(query), fragment="", path=parsed.path or "/"
+    ).geturl()
+    if normalized.endswith("/") and parsed.path not in {"", "/"}:
+        normalized = normalized[:-1]
+    return normalized
+
+
+def classify_bookmark(bookmark: dict) -> str:
+    """按域名和标题将 Chrome AI 书签归入四类之一。"""
+    host = urlparse(bookmark.get("url", "")).netloc.lower().removeprefix("www.")
+    title = (bookmark.get("title") or "").lower()
+    if host in CHROME_SOCIAL_HOSTS:
+        return "社交入口"
+    if host in CHROME_TECH_HOSTS or any(word in title for word in ("vibe coding", "zread", "llm")):
+        return "技术源"
+    if host in CHROME_COMMUNITY_HOSTS or any(word in title for word in ("社区", "社群", "工作", "营销")):
+        return "社区/工作入口"
+    return "资讯聚合"
+
+
+def load_chrome_ai_bookmarks(path: Path | None = None) -> list[dict]:
+    """读取 Chrome Default 配置中的 AI资讯文件夹并规范化去重。"""
+    if path is None:
+        local_app_data = os.environ.get("LOCALAPPDATA", "")
+        if not local_app_data:
+            print("  [bookmarks] LOCALAPPDATA 未设置，跳过 Chrome 书签")
+            return []
+        path = Path(local_app_data) / "Google" / "Chrome" / "User Data" / "Default" / "Bookmarks"
+    if not path.exists():
+        print(f"  [bookmarks] 文件不存在: {path}")
+        return []
+
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        print(f"  [bookmarks] 读取失败: {error}")
+        return []
+
+    candidates = []
+
+    def walk(node: dict, folder_path: str = "", in_target: bool = False) -> None:
+        if not isinstance(node, dict):
+            return
+        node_type = node.get("type")
+        name = str(node.get("name", ""))
+        current_path = f"{folder_path}/{name}" if name else folder_path
+        target = in_target or (node_type == "folder" and name == CHROME_AI_BOOKMARK_FOLDER)
+        if node_type == "url" and target:
+            url = normalize_bookmark_url(node.get("url", ""))
+            if url:
+                candidates.append({
+                    "title": name or url,
+                    "url": url,
+                    "folder": current_path.rsplit("/", 1)[0],
+                })
+        for child in node.get("children", []) or []:
+            walk(child, current_path, target)
+
+    for root in (data.get("roots") or {}).values():
+        walk(root)
+
+    results = []
+    seen = set()
+    for item in candidates:
+        if item["url"] in seen:
+            continue
+        seen.add(item["url"])
+        category = classify_bookmark(item)
+        item.update({
+            "category": category,
+            "source_type": f"Chrome书签·{category}",
+            "max_articles": 2,
+            "enabled": True,
+            "observe_only": category in {"社交入口", "社区/工作入口"},
+        })
+        results.append(item)
+
+    counts = {category: sum(item["category"] == category for item in results)
+              for category in ("社交入口", "资讯聚合", "技术源", "社区/工作入口")}
+    print(f"  [bookmarks] AI资讯读取 {len(results)} 条: "
+          + ", ".join(f"{key}={value}" for key, value in counts.items()))
+    return results
+
 def load_info_sources() -> list[dict]:
     """从知识库读取信息源配置表。"""
     source_path = KB_DIR / "13-AI资讯信息源.md"
@@ -748,8 +857,33 @@ def load_info_sources() -> list[dict]:
     return sources
 
 
+def load_all_info_sources() -> list[dict]:
+    """合并 Markdown 配置源和 Chrome 动态书签，按规范化 URL 去重。"""
+    sources = load_info_sources()
+    bookmarks = load_chrome_ai_bookmarks()
+    merged = []
+    positions = {}
+    for source in sources:
+        key = normalize_bookmark_url(source.get("url", "")) or source.get("url", "")
+        positions[key] = len(merged)
+        merged.append(source)
+    for bookmark in bookmarks:
+        key = bookmark["url"]
+        if key in positions:
+            existing = merged[positions[key]]
+            existing["bookmark_category"] = bookmark["category"]
+            existing["bookmark_title"] = bookmark["title"]
+            continue
+        positions[key] = len(merged)
+        merged.append(bookmark)
+    print(f"  [sources] 合并后 {len(merged)} 个信息源（Chrome 书签 {len(bookmarks)} 条）")
+    return merged
+
+
 def fetch_source_articles(source: dict, max_articles: int = 5) -> list[dict]:
     """抓取单个信息源的热门文章列表"""
+    if source.get("observe_only"):
+        return []
     url = source["url"]
     title = source["title"]
     # 跳过需要登录或无法直接抓取的源
@@ -1044,9 +1178,9 @@ def main():
     print("\n[3/5] 采集其他信息源...")
     source_articles = []
     if not args.quick:
-        sources = load_info_sources()
+        sources = load_all_info_sources()
         for src in sources:
-            if not src.get("enabled", True):
+            if not src.get("enabled", True) or src.get("observe_only"):
                 continue
             arts = fetch_source_articles(src, src.get("max_articles", 2))
             source_articles.extend(arts)
@@ -1054,7 +1188,8 @@ def main():
         source_articles = deduplicate_articles(source_articles)
         print(f"  [sources] 共 {len(source_articles)} 条文章（去重前 {before_dedup} 条）")
     else:
-        print("  [sources] 快速模式，跳过")
+        bookmark_sources = load_chrome_ai_bookmarks()
+        print(f"  [sources] 快速模式，跳过正文抓取；已检查 {len(bookmark_sources)} 条 Chrome 书签")
 
     # ── 4. 分析、去重、归类 ──
     print("\n[4/5] 分析消息并整理知识...")

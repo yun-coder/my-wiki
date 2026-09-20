@@ -551,8 +551,14 @@ def build_daily_summary(articles: Iterable[dict]) -> dict:
         source = clean_text(item.get("source", "未知来源"))
         if url in seen_urls:
             continue
-        if len(summary) < 20 or summary == title:
-            summary = f"{source} 抓取到主题“{title}”，待补充正文分析。"
+        if (
+            len(summary) < 20
+            or summary == title
+            or "待补充正文分析" in summary
+            or title.lower() in {"home", "feed", "首页", "主页", "导航"}
+            or title.startswith("[需要登录]")
+        ):
+            continue
         seen_urls.add(url)
         featured.append({
             "title": title[:100],
