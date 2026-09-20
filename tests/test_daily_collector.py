@@ -89,7 +89,7 @@ class DailyCollectorTests(unittest.TestCase):
         self.assertEqual(collector.fetch_source_articles(bookmark_sources[1]), [])
 
     def test_scheduler_points_to_current_project(self):
-        task_xml = (collector.PROJECT_ROOT / "MyWikiDailyTask.xml").read_text(encoding="utf-8-sig")
+        task_xml = (collector.PROJECT_ROOT / "MyWikiDailyTask.xml").read_text(encoding="utf-16")
         legacy_script = (collector.PROJECT_ROOT / "scripts" / "digest_ai_news.py").read_text(encoding="utf-8")
         self.assertNotIn(r"D:\local-projects\my-wiki", task_xml)
         self.assertIn("run_daily_collector.bat", task_xml)
