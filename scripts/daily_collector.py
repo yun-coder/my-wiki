@@ -783,6 +783,11 @@ CHROME_TECH_HOSTS = {
 CHROME_COMMUNITY_HOSTS = {
     "wearesellers.com", "discord.com", "zsxq.com", "sopilot.net",
 }
+CHROME_IGNORED_HOSTS = {
+    "aIhot.news", "aihot.news", "newsnow.busiyi.world", "tophub.today",
+    "zread.ai", "zdoc.app", "radar.lyihub.com", "nv-pu-sa.pages.dev", "fmhy.net",
+    "wallstreetcn.com", "bloomberg.com", "reuters.com", "forbes.com",
+}
 CHROME_TRACKING_PARAMS = {
     "gclid", "fbclid", "gbraid", "wbraid", "spm", "track",
 }
@@ -848,11 +853,13 @@ def load_chrome_ai_bookmarks(path: Path | None = None) -> list[dict]:
         if node_type == "url" and target:
             url = normalize_bookmark_url(node.get("url", ""))
             if url:
-                candidates.append({
-                    "title": name or url,
-                    "url": url,
-                    "folder": current_path.rsplit("/", 1)[0],
-                })
+                host = urlparse(url).netloc.lower().removeprefix("www.")
+                if host not in CHROME_IGNORED_HOSTS:
+                    candidates.append({
+                        "title": name or url,
+                        "url": url,
+                        "folder": current_path.rsplit("/", 1)[0],
+                    })
         for child in node.get("children", []) or []:
             walk(child, current_path, target)
 

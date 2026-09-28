@@ -83,10 +83,8 @@ class DailyCollectorTests(unittest.TestCase):
 
             result = collector.load_chrome_ai_bookmarks(bookmark_path)
 
-        self.assertEqual(len(result), 4)
+        self.assertEqual(len(result), 3)
         by_title = {item["title"]: item for item in result}
-        self.assertEqual(by_title["AI 热点榜"]["url"], "https://aihot.news/hot")
-        self.assertEqual(by_title["AI 热点榜"]["category"], "资讯聚合")
         self.assertEqual(by_title["X"]["category"], "社交入口")
         self.assertEqual(by_title["何夕2077"]["category"], "技术源")
         self.assertTrue(by_title["Discord"]["observe_only"])
@@ -202,16 +200,12 @@ class DailyCollectorTests(unittest.TestCase):
     def test_expanded_sources_are_loaded(self):
         sources = collector.load_info_sources()
         titles = {source["title"] for source in sources}
-        self.assertGreaterEqual(len(sources), 20)
-        self.assertTrue({"OpenAI News", "Google DeepMind", "arXiv cs.LG"} <= titles)
+        self.assertEqual(len(sources), 7)
+        self.assertTrue({"Hugging Face Blog", "alphaXiv", "Hacker News", "TechCrunch AI"} <= titles)
 
     def test_ai_news_source_is_loaded(self):
         sources = collector.load_info_sources()
-        source = next(item for item in sources if item["title"] == "AI News")
-        self.assertEqual(
-            source["url"],
-            "https://www.artificialintelligence-news.com/all-categories/",
-        )
+        self.assertNotIn("AI News", {item["title"] for item in sources})
 
     def test_ai_news_parser_excludes_sponsored_cards(self):
         html = '''
