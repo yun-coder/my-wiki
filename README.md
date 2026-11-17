@@ -58,7 +58,8 @@ my-wiki/
 
 - 删除：`scripts/`、`tests/`、`docs/superpowers/`（采集管道计划与规格）、`MyWikiDailyTask.xml`（Windows 定时任务）、`run_daily_collector.*`、`run_digest.py`、`.env`（含 API Key，**已在历史中，需轮换密钥**）。
 - 合并：`AI知识库/01–14` 13 个专题 + `00-overview` 4 页 → `00-总览` 2 页 + `10-AI工程` 6 页方法论 + `20-业务与产品` 5 页。
-- 降级：`09-项目分类索引`（723 行自动表）冻结为 `40-参考/项目索引快照-2026-09.md`；`hex2077-skill-manifest.md` 移入 `40-参考/外部技能-hex2077情报接入.md`；`99-归档/资讯洞察库-逐条历史`、`原始GitHub收藏`、`知识库全景整理` 不再保留（可从 git 历史取回）。
+- 降级：`09-项目分类索引`（723 行自动表）冻结为 `40-参考/项目索引快照-2026-09.md`；`99-归档/资讯洞察库-逐条历史`、`原始GitHub收藏`、`知识库全景整理`、第三方技能接入说明（hex2077）不再保留（可从 git 历史取回）。
+- 口径：**TradeMind AI SDR 统一更名为 TradeMind SDR**（2026-11-17），`AI SDR / 外贸 SDR / 智贸 SDR` 仅作内部检索别名，见 [产品矩阵](20-业务与产品/02-TradeMind产品矩阵.md)。
 - 新增：DSH 技能手册（18 个技能 + `skill` 工具）、DSH 插件与配置（16 个 bundle）、DSH 实战要点、TradeMind 产品矩阵、产品能力与定价事实、AI 解决方案交付方法、GEO 知识点页。
 - 备份：`30-DSH能力/skills原文/`（11 个技能的 SKILL.md 与 references，已逐文件哈希比对）、`40-参考/`（产品画像原始总览、白板脑图整理、GEO 原文剪藏、项目索引快照）。
 - 安全网：旧版完整保留在分支 `pre-merge-2026-11-17`（已推远程）。找回单个文件：`git show pre-merge-2026-11-17:AI知识库/01-AI视频生成.md`。

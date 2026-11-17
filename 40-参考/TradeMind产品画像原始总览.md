@@ -7,6 +7,8 @@
 - **方法**：公开官网、公开定价 API、帮助中心、产品矩阵页、工商/备案信息；未登录内部工作台
 - **标记**：【事实】有公开来源；【判断】基于公开资料的整理判断；【待确认】需公司内部确认
 
+> **口径说明（2026-11-17）**：本文件是 2026-11-16 的原始稿，为保留证据原貌，正文不做改写。文中「TradeMind AI SDR」现已统一为 **TradeMind SDR**，对外口径以 [产品矩阵](../20-业务与产品/02-TradeMind产品矩阵.md) 与 [定价事实](../20-业务与产品/03-产品能力与定价事实.md) 为准。
+
 ---
 
 ## 0. 先统一四个口径
@@ -540,17 +542,17 @@ SDR 工作台需要登录，本次未进入内部工作台；功能与流程依�
 
 ### 6.1 两套对外矩阵的对应关系
 
-| 能力 | TradeMind 六款 | 中造官网产品中心 | 入口 | 建议层级 |
-|---|---|---|---|---|
-| 获客 | TradeMind AI SDR | 外贸 SDR | sdr.trademind.global | **主推** |
-| 建站 | 独立站 | 外贸独立站 | site.trademind.global | **主推** |
-| 搜索优化 | 官网 SEO/GEO 检测优化 | 未见独立条目 | look.trademind.global | 协同 |
-| 内容运营 | 外贸内容运营 | AI 运营工作台 | zzpms.com/products | 协同 |
-| 爆款/生图 | 外贸爆款分析与生图 | 爆款洞察工坊 | zzpms.com/products | 协同 |
-| 信用证 | 信用证审核 | 信用证 AI 审核与自动制单 | zzpms.com/products | 协同/内测 |
-| 3D | 未列入六款 | AI 3D 建模平台 | zzpms.com/products | 孵化/项目 |
-| RPA | 未列入六款 | 中造 RPA 自动化平台 | zzpms.com/products | 孵化/项目 |
-| 知识库/工作流 | 底层能力 | 企业 AI 知识与自动化系统 | zzpms.com/solutions | 项目制 |
+| 能力      | TradeMind 六款     | 中造官网产品中心       | 入口                    | 建议层级   |
+| ------- | ---------------- | -------------- | --------------------- | ------ |
+| 获客      | TradeMind AI SDR | 外贸 SDR         | sdr.trademind.global  | **主推** |
+| 建站      | 独立站              | 外贸独立站          | site.trademind.global | **主推** |
+| 搜索优化    | 官网 SEO/GEO 检测优化  | 未见独立条目         | look.trademind.global | 协同     |
+| 内容运营    | 外贸内容运营           | AI 运营工作台       | zzpms.com/products    | 协同     |
+| 爆款/生图   | 外贸爆款分析与生图        | 爆款洞察工坊         | zzpms.com/products    | 协同     |
+| 信用证     | 信用证审核            | 信用证 AI 审核与自动制单 | zzpms.com/products    | 协同/内测  |
+| 3D      | 未列入六款            | AI 3D 建模平台     | zzpms.com/products    | 孵化/项目  |
+| RPA     | 未列入六款            | 中造 RPA 自动化平台   | zzpms.com/products    | 孵化/项目  |
+| 知识库/工作流 | 底层能力             | 企业 AI 知识与自动化系统 | zzpms.com/solutions   | 项目制    |
 
 ### 6.2 两主推的闭环
 

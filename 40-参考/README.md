@@ -11,7 +11,6 @@
 | [GEO-从SEO到GEO-原文](GEO-从SEO到GEO-原文.md) | 生成式引擎优化万字长文剪藏 | 知乎专栏（原文链接见文首） | 2026-07-24 |
 | [TradeMind产品画像原始总览](TradeMind产品画像原始总览.md) | 产品档案原始稿（约 53KB） | `D:\智贸\TradeMind_产品档案_20261116\output` | 2026-11-16 |
 | [产品白板脑图原始整理](产品白板脑图原始整理.md) | 策略层白板脑图识别稿 | 同上档案 `docs/` | 2026-11-16 |
-| [外部技能-hex2077情报接入](外部技能-hex2077情报接入.md) | 第三方 Agent 接入技能包说明 | hex2077.dev/agent | 2026-07 |
 
 另有 `../30-DSH能力/skills原文/`：本机 11 个技能的 SKILL.md 原文备份。
 
@@ -33,4 +32,4 @@ git show pre-merge-2026-11-17:AI知识库/00-overview/知识精华总览.md
 git show pre-merge-2026-11-17:scripts/daily_collector.py
 ```
 
-清单：`scripts/`、`tests/`、`docs/superpowers/`、`MyWikiDailyTask.xml`、`run_daily_collector.*`、`run_digest.py`、`.env`、`AI知识库/99-归档`（资讯逐条历史、原始 GitHub 收藏、全景整理）。
+清单：`scripts/`、`tests/`、`docs/superpowers/`、`MyWikiDailyTask.xml`、`run_daily_collector.*`、`run_digest.py`、`.env`、`外部技能-hex2077情报接入.md`、`AI知识库/99-归档`（资讯逐条历史、原始 GitHub 收藏、全景整理）。
