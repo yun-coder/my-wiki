@@ -55,7 +55,7 @@
 
 | 对外统一名 | 官网 / 内部还在用的叫法 | 入口 |
 |---|---|---|
-| TradeMind SDR | AI SDR（旧称，2026-11-17 起停用）、外贸 SDR、智贸 SDR | [sdr.trademind.global](https://sdr.trademind.global/) |
+| TradeMind SDR | 仅此一种写法，不设别名 | [sdr.trademind.global](https://sdr.trademind.global/) |
 | TradeMind Site | 独立站、外贸独立站 | [site.trademind.global](https://site.trademind.global/) |
 | 官网 SEO / GEO | 官网 SEO/GEO 检测优化、TradeMind LOOK（建议） | [look.trademind.global](https://look.trademind.global/) |
 | 外贸内容运营 | AI 运营工作台 | [zzpms.com/products](https://zzpms.com/products) |
@@ -63,7 +63,7 @@
 | 信用证审核 | 信用证 AI 审核与自动制单 | [zzpms.com/products](https://zzpms.com/products) |
 | 3D / RPA / 知识库 | AI 3D 建模平台、中造 RPA、企业 AI 知识与自动化系统 | [zzpms.com/products](https://zzpms.com/products) |
 
-【已定】2026-11-17：**TradeMind AI SDR 正式更名为 TradeMind SDR**，对外一律用 `TradeMind SDR`（英文品牌 + 产品名，中文副标题「外贸 AI 获客」）。`AI SDR / 外贸 SDR / 智贸 SDR` 只作内部检索别名，不再出现在对客页面、报价单和合同里。
+【已定】2026-11-17：SDR 对外**只用 `TradeMind SDR` 一个写法**（英文品牌 + 产品名，中文副标题「外贸 AI 获客」）。不设别名、不复述旧称；对客页面、报价单、合同、PPT 里出现其他写法都算错。
 【判断】其余产品线仍有同类问题（独立站 / 外贸独立站、内容运营 / AI 运营工作台、爆款分析与生图 / 爆款洞察工坊），按同一规则逐个收敛，不要一次全改。
 
 ### 2.2 三个"产品数量"口径
@@ -72,7 +72,7 @@
 |---|---|---|---|
 | 2 款 | 2026-11-16 已确认 | SDR + Site | **主推口径**，销售注意力与指标都按这层 |
 | 6 款 | TradeMind 官网"旗下六款" | SDR、独立站、SEO/GEO、内容运营、爆款分析与生图、信用证审核 | 讲"产品矩阵完整"时用，不并列主推 |
-| 7 款 | 中造软件产品中心 | AI 运营工作台、爆款洞察工坊、3D、信用证、外贸 SDR、RPA、独立站 | 讲公司技术面时用；其中 3D/RPA 实际归项目制 |
+| 7 款 | 中造软件产品中心 | AI 运营工作台、爆款洞察工坊、3D、信用证、TradeMind SDR、RPA、独立站 | 讲公司技术面时用；其中 3D/RPA 实际归项目制 |
 
 【判断】三个数字都不是错，错的是用同一个语境混着说。对客一句话版本："主推两款，另有四款协同能力，需要定制的走项目。"
 

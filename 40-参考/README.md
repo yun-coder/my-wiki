@@ -32,4 +32,4 @@ git show pre-merge-2026-11-17:AI知识库/00-overview/知识精华总览.md
 git show pre-merge-2026-11-17:scripts/daily_collector.py
 ```
 
-清单：`scripts/`、`tests/`、`docs/superpowers/`、`MyWikiDailyTask.xml`、`run_daily_collector.*`、`run_digest.py`、`.env`、`外部技能-hex2077情报接入.md`、`AI知识库/99-归档`（资讯逐条历史、原始 GitHub 收藏、全景整理）。
+清单：`scripts/`、`tests/`、`docs/superpowers/`、`MyWikiDailyTask.xml`、`run_daily_collector.*`、`run_digest.py`、`.env`、第三方 Agent 技能接入说明、`AI知识库/99-归档`（资讯逐条历史、原始 GitHub 收藏、全景整理）。
