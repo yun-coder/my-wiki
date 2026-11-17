@@ -9,28 +9,32 @@ Desktop.ini
 
 # === IDE ===
 .idea/
-
-# === Obsidian ===
-.obsidian/workspace.json
-.obsidian/workspace-mobile.json
-.trash/
-
-# === Claude Code ===
+.claude/
 .claude/settings.local.json
 
-# === Python ===
+# === Obsidian（本地配置不共享） ===
+.obsidian
+.trash/
+
+# === 敏感文件：密钥 / token / 本地记忆 ===
+.env
+.env.*
+*.key
+*.pem
+*.log
+.gbrain-owner.json
+.credentials.yaml
+
+# === Python / Node 运行产物 ===
 __pycache__/
 *.py[cod]
 *.egg-info/
 .Python
 venv/
 .venv/
-
-# === Node (如有) ===
 node_modules/
 
-# === 脚本缓存 ===
+# === 临时目录 ===
+_inbox/
+_md/
 KB/scripts/cache/
-.obsidian
-.claude
-.idea
