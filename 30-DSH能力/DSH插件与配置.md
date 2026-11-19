@@ -1,3 +1,8 @@
+---
+type: concept
+title: DSH 插件与配置
+---
+
 # DSH 插件与配置
 
 > 这页解决一个问题：**本机 DSH 装了哪些插件、各自负责什么、加装或排查时去哪看。**
@@ -61,3 +66,12 @@ profile 里用 `link:` 引用了三个本地目录，改源码即生效（client
 4. DSH 日志/插件管理器日志在 `~/.dsh/profiles/desktop/.plugin-manager/logs/`。
 5. client 端插件改动后，页面是否需要重新构建与刷新。
 6. 权限类问题（Windows 沙箱、文件被拒）先看 [DSH实战要点](DSH实战要点.md)。
+
+## Takes
+
+<!--- gbrain:takes:begin -->
+
+| # | claim | kind | who | weight | since | source |
+|---|-------|------|-----|--------|-------|--------|
+| 1 | 版本不匹配时应直接拦下，不要绕过 DSH 插件版本闸门；绕过后大概率会导致运行时崩溃。 | take | brain | 0.7 | 2026-11-19 | take_proposals#235 |
+<!--- gbrain:takes:end -->
